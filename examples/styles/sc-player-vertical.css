@@ -1,0 +1,196 @@
+/* ----------< .vertical >---------------- */
+
+.vertical .sc-player {
+	width: 270px;
+	height: 540px;
+	position: relative;
+	margin: 5px;
+}
+
+.vertical .sc-player ol,
+.vertical .sc-player li {
+	margin: 0;
+	padding: 0;
+	list-style-position: inside;
+}
+
+/* Artworks */
+
+.vertical .sc-artwork-list {
+	width: 100%;
+	height: 50%;
+	list-style-type: none;
+	position: relative;
+}
+
+.vertical .sc-artwork-list li {
+	list-style-type: none;
+	display: none;
+}
+
+.vertical .sc-artwork-list li.active {
+	list-style-type: none;
+	display: block;
+}
+
+.vertical .sc-artwork-list img {
+	list-style-type: none;
+	width: 100%;
+	height: 100%;
+}
+
+.vertical .sc-no-artwork {
+	display: none;
+}
+
+/* controls */
+
+.vertical .sc-controls {
+	position: absolute;
+	width: 50px;
+	height: 50px;
+	margin-left: -25px;
+	margin-top: -25px;
+	top: 25%;
+	left: 50%;
+}
+
+.vertical .sc-controls a {
+	display: block;
+	width: 50px;
+	height: 50px;
+}
+
+/* scrubber */
+
+.vertical .sc-scrubber {
+	position: absolute;
+	bottom: 280px;
+	height: 40px;
+	width: 250px;
+	left: 10px;
+	display: block;
+}
+
+.vertical .sc-time-span {
+	height: 30px;
+	margin: 5px;
+	position: relative;
+}
+
+.vertical .sc-buffer,
+.vertical .sc-played {
+	height: 30px;
+	position: absolute;
+	top: 0;
+}
+
+.vertical .sc-time-span img {
+	height: 30px;
+	width: 100%;
+}
+
+.vertical .sc-time-indicators {
+	position: absolute;
+	right: 10px;
+	top: 235px;
+}
+
+.vertical .sc-player.played .sc-time-indicators,
+.vertical .sc-player.paused .sc-time-indicators {
+	top: 190px;
+}
+
+/* volume control */
+
+.vertical .sc-volume-slider {
+	top: -25px;
+	left: 0px;
+	position: absolute;
+	width: 110px;
+	height: 12px;
+	background-color: white;
+}
+
+.vertical .sc-volume-slider .sc-volume-status {
+	position: absolute;
+	width: 0%;
+	height: 10px;
+	top: 1px;
+	left: 1px;
+}
+
+/* Track list */
+
+.vertical .sc-trackslist {
+	position: absolute;
+	width: 100%;
+	height: 50%;
+	top: 50%;
+	left: 0;
+	overflow: auto;
+}
+
+.vertical .sc-trackslist li {
+	cursor: pointer;
+	margin: 5px;
+	padding: 3px 30px 3px 5px;
+	position: relative;
+}
+
+.vertical .sc-track-duration {
+	position: absolute;
+	right: 0;
+	top: 3px;
+}
+
+/* Track info*/
+
+.vertical .sc-info {
+	position: absolute;
+	top: 0px;
+	width: 260px;
+	height: 260px;
+	padding: 5px;
+	z-index: 1;
+	overflow: auto;
+	opacity: 0.9;
+}
+
+.vertical .sc-info-toggle {
+	position: absolute;
+	top: 10px;
+	left: 10px;
+}
+
+.vertical .sc-info-close {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+}
+
+.vertical .sc-info,
+.vertical .sc-info-toggle.active,
+.vertical .sc-player .sc-scrubber {
+	visibility: hidden;
+}
+
+.vertical .sc-info.active,
+.vertical .sc-player.played .sc-scrubber,
+.vertical .sc-player.paused .sc-scrubber {
+	visibility: visible;
+}
+
+/* utilities */
+
+.vertical .sc-player .hidden {
+	display: none;
+}
+
+.vertical .sc-player-engine-container {
+	width: 1px;
+	height: 1px;
+	position: fixed;
+	top: 2px;
+	left: 2px;
+}

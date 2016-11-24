@@ -1,0 +1,260 @@
+.sc-player {
+	width: 200px;
+	height: 200px;
+	position: relative;
+	margin: 5px;
+	font: .6em Arial,sans-serif;
+	background-color: #eee;
+	color: #ddd;
+	line-height: 1.6em;
+	text-shadow: none;
+	display: inline-block;
+}
+.sc-player a {
+	text-decoration: none;
+}
+.sc-player ol, .sc-player li {
+	margin: 0;
+	padding: 0;
+}
+
+/*******************************/
+/*********** Artwork ***********/
+/*******************************/
+.sc-artwork-list {
+	width: 100%;
+	height: 100%;
+	background: url('img/artwork-qm.svg') no-repeat center;
+	background-size: 100%;
+	list-style-type: none;
+	position: relative;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-shadow: rgba(0, 0, 0, .35) 0 1px 5px;
+	float: left;
+	margin: 0 10px 30px 0;
+}
+.sc-artwork-list::after {
+	position: absolute;
+	top: 0; left: 0; right: 0; bottom: -1px;
+	content: " ";
+	background: url('img/gradient-glass.svg');
+	background: -webkit-linear-gradient(-45deg, rgba(255, 255, 255, .15) 50%, transparent 50%);
+	background: -moz-linear-gradient(-45deg, rgba(255, 255, 255, .15) 50%, transparent 50%);
+	background: -o-linear-gradient(-45deg, rgba(255, 255, 255, .15) 50%, transparent 50%);
+	box-shadow: rgba(255, 255, 255, .1) 0 1px 0 inset;
+}
+.sc-artwork-list li {
+	list-style-type: none;
+	display: none;
+}
+.sc-artwork-list li.active {
+	list-style-type: none;
+	display: block;
+}
+.sc-artwork-list img {
+	list-style-type: none;
+	width: 100%;
+	height: 100%;
+}
+
+/*******************************/
+/********** Controls ***********/
+/*******************************/
+.sc-controls {
+	position: absolute;
+	width: 50px;
+	height: 50px;
+	margin-left: -25px;
+	margin-top: -25px;
+	top: 50%;
+	left: 50%;
+	border: 2px solid #ddd;
+	border-radius: 100%;
+	background-color: #333;
+	opacity: .8;
+}
+.sc-controls:hover{
+	background-color: #333;
+	opacity: .9;
+}
+.sc-controls a {
+	display: block;
+	width: 50px;
+	height: 50px;
+}
+.sc-controls a, .sc-controls a:hover {
+	color: transparent;
+}
+.sc-play {
+	background: url('img/play-modern.svg') no-repeat center;
+}
+.sc-pause {
+	background: url('img/pause-modern.svg') no-repeat center;
+}
+.played .sc-pause {
+	display: block;
+}
+
+/*******************************/
+/*********** Scrubber **********/
+/*******************************/
+.sc-scrubber {
+	position: absolute;
+	bottom: 0px;
+	height: 10px;
+	width: 200px;
+	border-radius: 8px;
+	visibility: hidden;
+}
+.sc-time-span {
+	position: relative;
+}
+.sc-buffer, .sc-played {
+	height: 9px;
+	position: absolute;
+	top: 0;
+}
+.sc-played {
+	background-color: rgba(0,0,0,.5);
+	border: 1px groove #ddd;
+	opacity: .7;
+}
+.sc-time-indicators {
+	position: absolute;
+	right: 5px;
+	top: 5px;
+	background-color: rgba(0,0,0,.4);
+	border-radius: 4px;
+	padding: 4px;
+	visibility: hidden;
+}
+.sc-waveform-container {
+	height: 10px;
+	width: 200px;
+	position: absolute;
+}
+.sc-player.played .sc-scrubber, .sc-player.paused .sc-scrubber, .sc-player.played .sc-time-indicators, .sc-player.paused .sc-time-indicators {
+	visibility: visible;
+}
+
+/*******************************/
+/********** Trackslist *********/
+/*******************************/
+.sc-trackslist {
+	position: absolute;
+	width: 100%;
+	max-height: 30%;
+	bottom: 0;
+	overflow: auto;
+	background-color: rgba(0, 0, 0, .5);
+	opacity: 0;
+}
+.sc-trackslist li {
+	position: relative;
+	cursor: pointer;
+	margin: 1px 5px;
+	padding: 3px 30px 3px 5px;
+}
+.sc-track-duration {
+	text-align: right;
+	padding: 0 5px;
+	margin-left: 5px;
+	position: absolute;
+	right: 0;
+	top: 3px;
+}
+.sc-trackslist li:hover {
+	background-color: rgba(99, 99, 99, .9);
+}
+.sc-trackslist li.active {
+	background-color: rgba(77, 77, 77, .7);
+}
+.sc-trackslist li.active a, .sc-trackslist li a {
+	color: #ddd;
+}
+.sc-trackslist:hover {
+	opacity: 1;
+	z-index: 1;
+}
+
+/*******************************/
+/************ Info *************/
+/*******************************/
+.sc-info {
+	position: absolute;
+	top: 0px;
+	width: 190px;
+	height: 190px;
+	z-index: 1;
+	padding: 5px;
+	background-color: rgba(0, 0, 0, .9);
+	overflow: auto;
+}
+.sc-info-toggle {
+	position: absolute;
+	top: 9px;
+	left: 9px;
+	width: 17px;
+	height: 17px;
+	color: transparent;
+}
+.sc-info-toggle:hover {
+	background: url('img/info-modern.svg') no-repeat center;
+	color: transparent;
+}
+.sc-info-close {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	padding: 1px 4px;
+	color: gray;
+}
+.sc-info-close:hover {
+	color: white;
+}
+.sc-info h3 a, .sc-info h4 a, .sc-info p a {
+	color: #95bcce;
+}
+.sc-info h3 a:hover, .sc-info h4 a:hover, .sc-info p a:hover {
+	color: #5e7681;
+}
+.sc-info p a {
+	text-decoration: underline;
+}
+.sc-info, .sc-info-toggle.active {
+	visibility: hidden;
+}
+.sc-info.active {
+	visibility: visible;
+}
+
+/*******************************/
+/************ Volume ***********/
+/*******************************/
+.sc-volume-slider {
+	top: -25px;
+	position: absolute;
+	width: 110px;
+	height: 12px;
+	background-color: #e5e5e5;
+	border-radius: 2px;
+}
+.sc-volume-status {
+	position: absolute;
+	width: 0%;
+	height: 10px;
+	top: 1px;
+	left: 1px;
+	background-color: #666;
+	border-right: 1px solid #f6a400;
+}
+
+/*******************************/
+.sc-volume-slider,
+.sc-player .hidden,
+.sc-waveform-container img,
+.sc-no-artwork,
+.sc-pause {
+	display: none;
+}

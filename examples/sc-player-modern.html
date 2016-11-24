@@ -1,39 +1,61 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html>
-  
-  <head>
-    
-    <title>SC player example: Modern Skin</title>
-    <link rel="stylesheet" href="../css/sc-player-modern.css" type="text/css">
-  
-  </head>
-  
-  <body style="background: #1f1f1f url('http://cl.ly/UEMd/j75k7.png'); margin: auto 5%;">
-   
-    <h1 style="color:#444; text-shadow: -1px 0 1px black, 1px 1px 1px #555; font-family: sans-serif;">Modern Player</h1>
-      
-      <div class="post">
-        
-        <a href="https://soundcloud.com/tunguska-ems/sets/tcg-retrospective" class="sc-player">Tunguska Chillout Grooves Retrospective</a>
-      
-        <a class="sc-player">Empty</a>
-      
-        <a href="https://soundcloud.com/ueffin-chatlan" class="sc-player">User Tracks</a>
-        
-      </div>
-      
-      <div class="sidebar">
-      </div>
-      
-      <div class="footer" style="color:#414141;font:bold 18px sans-serif;text-shadow: -1px 0 0px black;">
-        <h2 style="color:#333;font:small-caps bold 1em sans-serif;">special for ponyach.ru imageboard</h2>
-        <a style="color:#404040;" href="https://github.com/OpenA/soundcloud-custom-player">GitHub</a>
-      </div>
-    
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
-    <script type="text/javascript" src="../js/soundcloud.player.api.js"></script>
-    <script type="text/javascript" src="../js/sc-player.js"></script>
-  </body>
-
+	<head>
+		<meta charset="utf-8">
+		<title>SC player example: Modern Skin</title>
+		<link rel="stylesheet" href="styles/sc-player-modern.css" type="text/css">
+		<script type="text/javascript" src="../js/sc-player.js"></script>
+		<style type="text/css">
+			body {
+				background: #1f1f1f url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAAAAAA7VNdtAAAB50lEQVR4AZXWt2HAAAwDQY6Bv/0Hde0slayYkA7bagmEpdFkNVIb6ba2AMrImAGxpQmcjBECZELKqFGEC0AW1gA2GQOATkMbxSwoshXUZqnqwBiTxT8XuVqoJpraqLEMNkPVHLJIQhvVskHSVGx2oBqWtW2VBNYo0mLHpJCGFraRBpZk4QDGWjOoJVKEwKwTywylig1qhqrU2nRvT5yDNZbAgkW2CIGMW0o2BWYbotXIsARXG4kJCmsTQk0S1rEZITKgDGqBJdjNsm0rW6FKBoyGjOrYRgYoEFmtbMSwuU1okWWrtBEVIGA7Y1hR0KzfSXFkpNFMBmYExdpQ3TZqTKgmJDLEJDQngAFqFaYKCCxcJZAEtQppbGFlazlIZGXQYqwsJTaZ3LP5Gdh0/wOEYFjTpSxmlKghUBmtxuTMBksiFiG0qlaJ6iqrDWkYGgJa0tLkgMkApSAroU2BuZ+vQouMqY0hdV/qLFZahjDFLBybTHg05dG2WQiaAUpimCV1ARoyozC0hmFlyxxg0QA2BG1qQmXtVqWlgvI3h87eCsaVBjYmTIOFFsIK7nFCYIILRnqogvcPoLRkFNjuRxaRqQIBzOZe66sbqhoUtJaZCBmwuCcRRMRgzrAaxLQlImtsNg1xiVep5APWKPeuYJTJhwAAAABJRU5ErkJggg==');
+				margin: auto 5%;
+			}
+			h1 {
+				color: #595959;
+				text-shadow: -1px 0 1px black, 1px 1px 1px #BCBCBC;
+				font-family: sans-serif;
+			}
+			h2 {
+				font: small-caps bold 1em sans-serif;
+			}
+			.footer {
+				color: #777;
+				font: bold 18px sans-serif;
+				text-shadow: -1px -1px 0 #222;
+			}
+			.footer a {
+				color: #95bcce;
+			}
+			.footer a:hover {
+				color: #5e7681;
+			}
+			#standart_skin_example {
+				padding: 1em;
+				background: #838383;
+				max-width: 150px;
+				text-align: center;
+				display: block;
+				border-radius: 0 0 10px 10px;
+				font: small-caps bold 1em sans-serif;
+				color: #c2c2c2;
+				text-shadow: -1px 1px 1px #111;
+				box-shadow: 1px 2px 4px rgba(0,0,0,.8);
+				margin-left: 5%;
+			}
+		</style>
+	</head>
+	<body>
+		<a id="standart_skin_example" href="sc-player-standard.html">Standart Player</a>
+		<h1>Modern Player</h1>
+		<div>
+			<a href="https://soundcloud.com/tunguska-ems/sets/tcg-retrospective" class="sc-player">Tunguska Chillout Grooves Retrospective</a>
+			<a class="sc-player">Empty</a>
+			<a href="https://soundcloud.com/ueffin-chatlan" class="sc-player">User Tracks</a>
+			<a href="http://soundcloud.com/matas/goldfrapp-little-bird-matas-ornitologic-remix" class="sc-player">Pumpkins Track</a>
+		</div>
+		<div class="footer">
+			<h2>special for ponyach.ru imageboard</h2>
+			<a href="https://github.com/OpenA/soundcloud-custom-player">GitHub</a>
+		</div>
+	</body>
  </html>

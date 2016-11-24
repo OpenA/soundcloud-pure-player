@@ -1,51 +1,65 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html>
-  
-  <head>
-    
-    <title>SC player example: Standard Skin</title>
-    <link rel="stylesheet" href="../css/sc-player-standard.css" type="text/css">
-  
-  </head>
-  
-  <body>
-   
-    <h1>The Directory</h1>
-      
-      <div class="post">  
-        
-        <h2>March 10</h2>
-        
-        <a href="http://soundcloud.com/matas" class="sc-player">Matas tracks</a>
-      
-        <h2>February 10</h2>
-      
-        <div class="sc-player">
-          <a href="http://soundcloud.com/matas/matas-petrikas-live-at-gravity-club-30-05-2008">My live track</a>
-          <a href="http://soundcloud.com/matas/goldfrapp-little-bird-matas-ornitologic-remix">Goldfrapp</a>
-          <a href="http://soundcloud.com/matas/on-the-bridge">On the bridge</a>
-        </div>
-                        
-        <h2>January 10</h2>
-      
-        <a href="http://soundcloud.com/forss/sets/soulhack" class="sc-player">Soulhack</a>
-        
-      </div>
-      
-      <div class="sidebar">
-        <h2>Contact</h2>
-        <p>are you want to get listed?</p>
-        <p>mail@thedirectory.us</p>
-      </div>
-      
-      <div class="footer">
-      2010
-      </div>
-    
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
-    <script type="text/javascript" src="../js/soundcloud.player.api.js"></script>
-    <script type="text/javascript" src="../js/sc-player.js"></script>
-  </body>
-
- </html>
+	<head>
+		<meta charset="utf-8">
+		<title>SC player example: Standard Skin</title>
+		<link rel="stylesheet" href="styles/sc-player-standard.css" type="text/css">
+		<link rel="stylesheet" href="styles/sc-player-horizontal.css" type="text/css">
+		<link rel="stylesheet" href="styles/sc-player-vertical.css" type="text/css">
+		<link rel="stylesheet" href="styles/sc-player-super.css" type="text/css">
+		<link rel="stylesheet" href="styles/sc-player-green.css" type="text/css">
+		<link rel="stylesheet" href="styles/sc-player-blue.css" type="text/css">
+		<link rel="stylesheet" href="styles/sc-player-orange.css" type="text/css">
+		<script type="text/javascript" src="../js/sc-player.js"></script>
+		<script type="text/javascript">
+			window.onclick = function(e) {
+				if (e.target.id && e.target.id.slice(0, 5) === 'style' && e.target.className.indexOf('selected') === -1) {
+					var name       = e.target.id.split('_'), sel = ' selected',
+						classList  = e.target.className.split(' '),
+						prevSelect = e.target.parentNode.querySelector('.selected');
+					e.target.parentNode.nextElementSibling.className = name[1] +' '+ name[2];
+					
+					if (prevSelect) {
+						prevSelect.className = prevSelect.className.substring(0, prevSelect.className.length - sel.length);
+					}
+					e.target.className += sel;
+				}
+			}
+		</script>
+	</head>
+	<body>
+		<a href="sc-player-modern.html">Modern Player</a>
+		<h1>Standart Skin</h1>
+		<div class="post">
+			<h2>horizontal <span id="style_horizontal_green" class="option-green selected">green</span> <span id="style_horizontal_blue" class="option-blue">blue</span> <span id="style_horizontal_orange" class="option-orange">orange</span></h2>
+			<div class="horizontal green">
+				<a href="http://soundcloud.com/matas" class="sc-player">Matas tracks</a>
+			</div>
+			<h2>vertical <span id="style_vertical_green" class="option-green">green</span> <span id="style_vertical_blue" class="option-blue selected">blue</span> <span id="style_vertical_orange" class="option-orange">orange</span></h2>
+			<div class="vertical blue">
+				<a href="http://soundcloud.com/forss/sets/soulhack" class="sc-player">Soulhack</a>
+			</div>
+		</div>
+		<div class="sidebar">
+			<h2>super <span id="style_super_green" class="option-green">green</span> <span id="style_super_blue" class="option-blue">blue</span> <span id="style_super_orange" class="option-orange selected">orange</span></h2>
+			<div class="super orange">
+				<div class="sc-player">
+					<a href="https://soundcloud.com/aethernaut/final-frontier">Final Frontier</a>
+					<a href="https://soundcloud.com/chibinoize/technicolor">Technicolor</a>
+					<a href="https://soundcloud.com/anzomusic/castlevania-bloody-tears-anzo">Castlevania - Bloody Tears (Anzo Cover)</a>
+					<a href="https://soundcloud.com/fuskasker/fusk-asker-bully-original-mix">Fusk Asker - Bully (Original Mix)</a>
+					<a href="https://soundcloud.com/ensnare-1/there-is-always-love">There Is Always Love</a>
+					<a href="https://soundcloud.com/dubmood/dubmood-chiptune">Dubmood - Chiptune</a>
+					<a href="https://soundcloud.com/protoflight/post">Post</a>
+					<a href="https://soundcloud.com/fantomenk/fantomenk-a-tiny-spaceships">A Tiny Spaceship's Final Mission</a>
+					<a href="https://soundcloud.com/aethernaut/shine-get">Shine Get</a>
+					<a href="https://soundcloud.com/tastyrecords/demon-groove-saturate-teaser">Demon Groove - Saturate</a>
+					<a href="https://soundcloud.com/tastyrecords/demon-groove-lenningrad-2034">Demon Groove - Lenningrad 2034</a>
+					<a href="https://soundcloud.com/bossfightswe/dr-wilys-castle-stage-1">Dr. Wily's Castle: Stage 1</a>
+					<a href="https://soundcloud.com/ensnare-1/yes-we-have-made-it-to-the">Yes, We Have Made it to the Dungeon Of Tropes</a>
+				</div>
+			</div>
+		</div>
+		<div class="footer">2010</div>
+	</body>
+</html>
