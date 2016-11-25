@@ -251,13 +251,6 @@
 }
 
 /*******************************/
-.sc-player-engine-container {
-	width: 1px;
-	height: 1px;
-	position: fixed;
-	top: 2px;
-	left: 2px;
-}
 .sc-volume-slider,
 .sc-player .hidden,
 .sc-waveform-container img,

@@ -28,7 +28,7 @@
 	box-shadow: 1px 1px 4px rgba(0,0,0,.3);
 }
 
-/* scrubber */
+/* Scrubber */
 
 .blue .sc-scrubber {
 	background-color: #e5e5e5;
@@ -59,7 +59,7 @@
 	position: absolute;
 }
 
-/* controls */
+/* Controls */
 
 .blue .sc-controls {
 	border-radius: 100%;
@@ -145,7 +145,7 @@
 	font-weight: bold;
 }
 
-/* volume control */
+/* Volume control */
 
 .blue .sc-volume-slider {
 	background-color: #e5e5e5;

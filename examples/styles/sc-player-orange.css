@@ -27,7 +27,7 @@
 	box-shadow: 1px 1px 3px rgba(0,0,0,.2);
 }
 
-/* scrubber */
+/* Scrubber */
 
 .orange .sc-scrubber {
 	background-color: #e5e5e5;
@@ -57,7 +57,7 @@
 	position: absolute;
 	width: 100%;
 }
-/* controls */
+/* Controls */
 
 .orange .sc-controls {
 	border-radius: 100%;

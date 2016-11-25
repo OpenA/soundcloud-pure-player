@@ -42,7 +42,7 @@
 	display: none;
 }
 
-/* controls */
+/* Controls */
 
 .horizontal .sc-controls {
 	position: absolute;
@@ -61,7 +61,7 @@
 	border-radius: 100%;
 }
 
-/* scrubber */
+/* Scrubber */
 
 .horizontal .sc-scrubber {
 	position: absolute;
@@ -100,7 +100,7 @@
 	bottom: 55px;
 }
 
-/* Track listings*/
+/* Track list */
 
 .horizontal .sc-trackslist {
 	position: absolute;
@@ -127,7 +127,7 @@
 	top: 3px;
 }
 
-/* Track info*/
+/* Track info */
 
 .horizontal .sc-info {
 	position: absolute;
@@ -160,7 +160,7 @@
 	visibility: visible;
 }
 
-/* volume control */
+/* Volume control */
 
 .horizontal .sc-volume-slider {
 	top: -25px;
@@ -178,16 +178,8 @@
 	left: 1px;
 }
 
-/* utilities */
+/* --- */
 
 .horizontal .sc-player .hidden {
 	display: none;
-}
-
-.horizontal .sc-player-engine-container {
-	width: 1px;
-	height: 1px;
-	position: fixed;
-	top: 2px;
-	left: 2px;
 }

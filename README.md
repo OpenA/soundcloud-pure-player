@@ -1,7 +1,7 @@
 # SoundCloud Pure Player
 The project to rewrite [SoundCloud jQuery Player Plugin](https://github.com/soundcloud/soundcloud-custom-player) (© Matas Petrikas, MIT) on a pure js code.
 
-Using example:
+Using example (add players automatically):
 ```html
 <head>
    ...
@@ -20,9 +20,8 @@ Using example:
    ...
 </body>
 ```
-And script add players automatically
 
-Manually adding players example:
+Manually adding:
 ```javascript
 var links = document.querySelectorAll('a[href^="https://soundcloud.com/"]');
 
@@ -31,5 +30,8 @@ for ( var i = 0; i < links.length; i++ ) {
 }
 ```
 
+Adding custom listeners coming soon.
+
 ## Browser compatible
-IE9+ / Opera 12.18+
+Should work on IE9+ / Opera 12.18+
+For the browsers with no support audio/mpeg or html5 audio, player uses small and fast [Flash MP3 Player with JS API](http://flash-mp3-player.net/players/js/) (© Neolao Production, MIT)

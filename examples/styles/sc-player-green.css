@@ -24,7 +24,7 @@
 	box-shadow: 1px 1px 4px rgba(0,0,0,.2);
 }
 
-/* scrubber */
+/* Scrubber */
 
 .green .sc-scrubber {
 	background-color: #e5e5e5;
@@ -54,7 +54,7 @@
 	background: -webkit-gradient(linear, left top, left 90%, from(black), color-stop(0%, #22B573), to(#7decba));
 }
 
-/* controls */
+/* Controls */
 
 .green .sc-controls {
 	border-radius: 100%;
@@ -110,6 +110,7 @@
 }
 
 /* Track info */
+
 .green .sc-info.active,
 .green .sc-info-close:hover,
 .green .sc-info-toggle:hover {
@@ -147,7 +148,7 @@
 	font-weight: bold;
 }
 
-/* volume control */
+/* Volume control */
 
 .green .sc-volume-slider {
 	background-color: #e5e5e5;

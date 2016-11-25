@@ -43,7 +43,7 @@
 	display: none;
 }
 
-/* controls */
+/* Controls */
 
 .vertical .sc-controls {
 	position: absolute;
@@ -61,7 +61,7 @@
 	height: 50px;
 }
 
-/* scrubber */
+/* Scrubber */
 
 .vertical .sc-scrubber {
 	position: absolute;
@@ -101,7 +101,7 @@
 	top: 190px;
 }
 
-/* volume control */
+/* Volume control */
 
 .vertical .sc-volume-slider {
 	top: -25px;
@@ -181,16 +181,8 @@
 	visibility: visible;
 }
 
-/* utilities */
+/* --- */
 
 .vertical .sc-player .hidden {
 	display: none;
-}
-
-.vertical .sc-player-engine-container {
-	width: 1px;
-	height: 1px;
-	position: fixed;
-	top: 2px;
-	left: 2px;
 }
