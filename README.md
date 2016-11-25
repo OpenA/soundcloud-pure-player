@@ -35,5 +35,4 @@ Adding custom listeners coming soon.
 ## Browser compatible
 Should work on IE9+ / Opera 12.18+
 
-For the browsers with no support audio/mpeg or html5 audio,
-player uses small and fast [Flash MP3 Player with JS API](http://flash-mp3-player.net/players/js/) (© Neolao Production, MIT)
+For the browsers with no support audio/mpeg or html5 audio, player uses small and fast [Flash MP3 Player with JS API](http://flash-mp3-player.net/players/js/) (© Neolao Production, MIT)
