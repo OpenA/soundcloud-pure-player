@@ -12,6 +12,9 @@
 */
 
 function SoundCloudAPI() {
+	
+	var _$ = this;
+	
 	Object.defineProperties(this, {
 		version: {
 			enumerable: true,
@@ -26,21 +29,25 @@ function SoundCloudAPI() {
 			enumerable: true,
 			writable: true,
 			value: true
-		}
+		},
+		getTracks : { value: $getTracks },
+		fetch     : { value: $fetch }
 	});
-}
-
-SoundCloudAPI.prototype = {
-	constructor : SoundCloudAPI,
-	getTrackInfo: function(url, callback) {
-		if (!url || typeof callback !== 'function') {
-			return;
+	
+	function $fetch(url, callback, errorback) {
+		
+		if (!url) {
+			return $panic('requested url is "'+ url +'"', errorback);
+		}
+		if (typeof callback !== 'function') {
+			return (window.Promise ? new Promise(function(resolve, reject) {
+				$fetch(url, resolve, reject)
+			}) : null);
 		}
 		
 		var protocol = (document.location.protocol === 'https:' ? 'https:' : 'http:'),
 			resolve = protocol +'//api.soundcloud.com/resolve?url=',
-			params = 'format=json&consumer_key='+ this.apiKey, apiUrl,
-			debug_mode = this.debug;
+			params = 'format=json&consumer_key='+ _$.apiKey, apiUrl;
 			
 		// force the secure url in unsecure environment
 		url = url.replace(/^https?:/, protocol);
@@ -58,24 +65,65 @@ SoundCloudAPI.prototype = {
 					return;
 				if (this.status === 200) {
 					try {
-						var trackObj = JSON.parse(this.responseText);
-					} catch(e) {
-						if (debug_mode && window.console) {
-							console.error(e)
+						var data = JSON.parse(this.responseText);
+					} catch(log) {
+						if (_$.debug && window.console) {
+							console.error(log)
 						}
 					} finally {
-						callback(trackObj);
+						callback(data);
 					}
 				} else {
-					if (debug_mode && window.console) {
-						console.error('unable to GET '+ this.responseURL +' ('+ 
-							this.status + (!this.statusText ? '' : ' '+ this.statusText) +')');
-					}
-					callback(null);
+					return $panic('unable to GET '+ url +' ('+ this.status +
+						(!this.statusText ? '' : ' '+ this.statusText) +')', errorback);
 				}
 			};
 			xhr.open('GET', apiUrl, true);
 			xhr.send(null);
+	}
+	
+	function $panic(msg, errorback) {
+		if (_$.debug && window.console) {
+			console.error('SoundCloudAPI: '+ msg);
+		}
+		if (typeof errorback !== 'function') {
+			return (window.Promise ? new Promise(function(resolve, reject) {
+				reject(new EvalError(msg));
+			}) : null);
+		} else
+			errorback(new EvalError(msg));
+	}
+	
+	function $getTracks(url, callback, errorback) {
+		
+		if (!url) {
+			return $panic('requested url is "'+ url +'"', errorback);
+		}
+		if (typeof callback !== 'function') {
+			return (window.Promise ? new Promise(function(resolve, reject) {
+				$getTracks(url, resolve, reject)
+			}) : null);
+		}
+		
+		var $bound = function(data) {
+			if (data) {
+				if (data.tracks) {
+					// log('data.tracks', data.tracks);
+					callback(data.tracks);
+				} else if (Array.isArray(data)) {
+					callback(data);
+				} else if (data.duration){
+					// a secret link fix, till the SC API returns permalink with secret on secret response
+					data.permalink_url = url;
+					// if track, add to player
+					callback([data]);
+				} else if (data.creator || data.username) {
+					// get user or group tracks, or favorites
+					$fetch(data.uri + (data.username && url.indexOf('favorites') != -1 ? '/favorites' : '/tracks'), $bound, errorback);
+				}
+			}
+		}
+		$fetch(url, $bound, errorback);
 	}
 };
 
@@ -85,13 +133,13 @@ SoundCloudAPI.prototype = {
 		'API': new SoundCloudAPI,
 		'Global': true,
 		'Volume': 0.8,
-		'Store' : {},
+		'Tracks': {},
+		'Object': {},
 		_listeners: {}
 	}
 	
 	var _Current_ = {
 		
-		StoreItem  : null,
 		TrackLoaded: null,
 		SelectTrack: null,
 		PlayerNode : null,
@@ -129,11 +177,8 @@ SoundCloudAPI.prototype = {
 			return this.PlayerNode['_buffer_'].style['width'];
 		},
 		
-		connect: function(store_item, player_node) {
-			if (!store_item) {
-				return;
-			}
-			this.StoreItem = store_item;
+		connect: function(player_node, track_node) {
+			
 			if (player_node && player_node !== this.PlayerNode) {
 				if (this.PlayerNode) {
 					this.PlayerNode[ '_volume_' ].onmousedown = null;
@@ -142,24 +187,25 @@ SoundCloudAPI.prototype = {
 				this.PlayerNode = ('_trackslist_' in player_node ? player_node : catchKeyElements('player', player_node));
 				this.PlayerNode[ '_volume_' ].onmousedown = barChanger;
 				this.PlayerNode['_waveform_'].onmousedown = barChanger;
-				this['Player Volume'] = SC.Volume;
+				this['Player Volume'] = SC['Global'] ? SC.Volume : SC['Object'][player_node.id.split('_')[1]];
 			}
 			
-			var idx = store_item.index,
-				track = store_item.tracks[idx],
-				track_node = this.PlayerNode['_trackslist_'].children[idx];
+			if (!track_node) {
+				track_node = this.PlayerNode.querySelector('.sc-track.active') || this.PlayerNode['_trackslist_'].firstElementChild;
+			}
 				
 			if (track_node && track_node !== this.SelectTrack) {
 				(this.PlayerNode.querySelector('.sc-track.active') || {}).className = 'sc-track';
 				track_node.className = 'sc-track active';
 				
-				this.TrackLoaded = track;
+				this.SelectTrack = ('_duration_' in track_node ? track_node : catchKeyElements('track', track_node));
+				this.TrackLoaded = SC['Tracks'][track_node.id.split('_')[2]];
+				
 				this['Track Progress'] = 0;
 				this['Track Buffered'] = 0;
 				
-				updateTrackInfo(this.PlayerNode, track);
-				this['AudioDevice'].loadTrack(track);
-				this.SelectTrack = ('_duration_' in track_node ? track_node : catchKeyElements('track', track_node));
+				updateTrackInfo(this.PlayerNode, this.TrackLoaded);
+				this['AudioDevice'].loadTrack(this.TrackLoaded);
 			}
 		}
 	}
@@ -169,7 +215,8 @@ SoundCloudAPI.prototype = {
 	}
 	
 	window.SCPurePlayer = {
-		create: createSCElements,
+		create: _scCreate,
+		createGroup: _scCreateGroup,
 		off: function(name, callback, idx) {
 			if (SC._listeners[name] && (idx = SC._listeners[name].indexOf(callback)) !== -1) {
 				delete SC._listeners[name][idx];
@@ -182,11 +229,79 @@ SoundCloudAPI.prototype = {
 			}
 		}
 	}
-	
 	document.addEventListener("DOMContentLoaded", onDOMReady);
 	
+	function _scCreateGroup(links) {
+		var hash = genGroupId(),
+			node = createPlayerDOM(hash, links.length),
+			ibx  = links.length, exp, i;
+		
+		for (i = 0; i < links.length; i++) {
+			exp = { hash: hash, node: node, it: i };
+			
+			SC['API'].getTracks(links[i].href, function(tracks) {
+				var _$     = this,
+					tNode  = createTrackDOM(tracks[0], _$.hash),
+					tChild = _$.node['_trackslist_'].children['ft_'+ _$.hash +'_'+ _$.it];
+				
+				_$.node['_trackslist_'].replaceChild(tNode, tChild);
+				
+				if (_$.it == 0) {
+					updateTrackInfo(_$.node, tracks[0]);
+					tNode.className += ' active';
+				}
+				
+				for (var n = 1; n < tracks.length; n++) {
+					tChild = tNode.nextSibling;
+					tNode  = createTrackDOM(tracks[n], _$.hash);
+					_$.node['_trackslist_'].insertBefore(tNode, tChild);
+				}
+			}.bind(exp), function(error) {
+				ibx--;
+				    this.node['_trackslist_'].children['ft_'+ this.hash +'_'+ this.it].remove();
+				if (this.node['_trackslist_'].children.length == 0 && ibx == 0)
+				    this.node.removeAttribute('id');
+			}.bind(exp));
+		}
+		
+		return node;
+	}
+	
+	function _scCreate(link) {
+		var hash = genGroupId(),
+			node = createPlayerDOM(hash),
+			exp = { hash: hash, node: node };
+		
+		SC['API'].getTracks(link.href, function(tracks){
+			var _$ = this;
+			tracks.forEach(function(track, j) {
+				var tNode = createTrackDOM(track, _$.hash);
+				
+				_$.node['_trackslist_'].insertBefore(tNode, _$.node['_trackslist_'].childNodes[j]);
+				
+				if (j == 0) {
+					updateTrackInfo(_$.node, track);
+					tNode.className += ' active';
+				}
+			});
+		}.bind(exp), function(error) {
+			this.node.removeAttribute('id');
+		}.bind(exp));
+		
+		return node;
+	}
+	
 	function onDOMReady(e) {
-		Array.prototype.slice.call(this.getElementsByClassName('sc-player'), 0).forEach(createSCElements);
+		Array.prototype.slice.call(this.getElementsByClassName('sc-player'), 0).forEach(function(scp) {
+			var node, links;
+			if (scp.href) {
+				node = _scCreate(scp);
+			} else if ((links = scp.querySelectorAll('a[href*="soundcloud.com/"]')).length > 0) {
+				node = _scCreateGroup(links);
+			} else
+				node = createPlayerDOM(null);
+			scp.parentNode.replaceChild(node, scp);
+		});
 		if (_Current_['AudioDevice'].tagName === 'OBJECT') {
 			var engineContainer = this.createElement('scont');
 				engineContainer.className = 'sc-engine-container';
@@ -196,21 +311,18 @@ SoundCloudAPI.prototype = {
 		}
 	}
 	function onEnd(e) {
-		var next_player, next_item;
-			_Current_.StoreItem.index++;
-		if (_Current_.StoreItem.tracks[_Current_.StoreItem.index]) {
-			_Current_.connect(_Current_.StoreItem);
+		 var play_next;
+		if ((play_next = _Current_.SelectTrack.nextElementSibling)) {
+			_Current_.connect(null, play_next);
 		} else {
-			_Current_.StoreItem.index = 0;
 			_Current_.PlayerNode['_button_'].className = 'sc-play';
 			_Current_.PlayerNode['_button_'].textContent = 'Play';
 			_Current_.PlayerNode.className = 'sc-player';
 			_Current_.SelectTrack.className = 'sc-track';
 			_Current_.PlayerNode['_trackslist_'].children[0].className = 'sc-track active';
-			if ((next_player = _Current_.PlayerNode.nextElementSibling) &&
-				 next_player.className.substring(0, 9) === 'sc-player' && (
-				 next_item = SC['Store'][next_player.id.slice(7)] )) {
-					_Current_.connect(next_item, next_player);
+			if ((play_next = _Current_.PlayerNode.nextElementSibling) &&
+				 play_next.className.substring(0, 9) === 'sc-player') {
+					_Current_.connect(play_next);
 			}
 		}
 	}
@@ -223,7 +335,9 @@ SoundCloudAPI.prototype = {
 		}
 	}
 	function onClickHandler(e) {
-		if (e.button === 0 && e.target.className.slice(0, 3) === 'sc-') {
+		if (e.button != 0 || !e.target.className)
+			return;
+		if (e.target.className.slice(0, 3) === 'sc-') {
 			var $target   = e.target,
 				classList = $target.className.split(' '),
 				$sc       = classList[0].split('-');
@@ -242,16 +356,13 @@ SoundCloudAPI.prototype = {
 						$player = $player.parentNode;
 						$target = $target.parentNode;
 					}
-					
-					$Id = $target.id.split('_');
-					SC['Store'][$Id[2]].index = Number($Id[1]);
-					_Current_.connect(SC['Store'][$Id[2]], $player);
+					_Current_.connect($player, $target);
 					break;
 				case 'play':
-					var $player = !SC['Global'] ? this : $target.parentNode.parentNode,
-						$Id = $player.id.split('_')[1];
-					
-					_Current_.connect(SC['Store'][$Id], $player);
+					var $player = !SC['Global'] ? this : $target.parentNode.parentNode;
+					if (!$player.id)
+						return;
+					_Current_.connect($player);
 				case 'pause':
 					_Current_.AudioDevice[$sc[1]]();
 			}
@@ -328,7 +439,7 @@ SoundCloudAPI.prototype = {
 				Object.defineProperties(audio, {
 					loadTrack   : { value: function(trk) {
 						this.SetVariable("method:setUrl",
-							trk.stream_url + (isContain(trk.stream_url, '?') ? '&' : '?') +'consumer_key='+ SC['API'].apiKey);
+							trk.stream_url + (trk.stream_url.indexOf('?') >= 0 ? '&' : '?') +'consumer_key='+ SC['API'].apiKey);
 						this.play(); }},
 					play        : { value: function()    {
 						flash.status = 'process';
@@ -345,7 +456,7 @@ SoundCloudAPI.prototype = {
 					duration    : { get: function()    { return Number(flash.duration) / 1000 || 0 }},
 					currentTime : { get: function()    { return Number(flash.position) / 1000 || 0 },
 								    set: function(rel) { this.SetVariable("method:setPosition", (rel * 1000)) }},
-					volume      : { get: function()    { return Number(flash.volume) / 100 || _Current_.StoreItem.volume },
+					volume      : { get: function()    { return Number(flash.volume) / 100 },
 								    set: function(vol) { this.SetVariable("method:setVolume", (vol * 100)) }},
 					ontimeupdate: { set: function(fn)  { flash.onTimeUpdate = fn || function(){} }}
 				});
@@ -372,7 +483,7 @@ SoundCloudAPI.prototype = {
 				bytesPercent: { get: function()    { return ((this.buffered.length && this.buffered.end(0)) / this.duration) * 100; }},
 				loadTrack : { value: function(trk) {
 					this.pause();
-					this.src = trk.stream_url + (isContain(trk.stream_url, '?') ? '&' : '?') +'consumer_key='+ SC['API'].apiKey;
+					this.src = trk.stream_url + (trk.stream_url.indexOf('?') >= 0 ? '&' : '?') +'consumer_key='+ SC['API'].apiKey;
 					this.play();
 				}}
 			});
@@ -390,10 +501,11 @@ SoundCloudAPI.prototype = {
 		}
 		return audio;
 	}
-	function createTrackDOM(track, gid, i) {
+	function createTrackDOM(track, hash) {
+		SC['Tracks'][track.id] = track;
 		var li = document.createElement('li');
-			li.id = 'sc-t_'+ i +'_'+ gid;
-			li.className = 'sc-track' + (i === 0 ? ' active' : '');
+			li.id = 'sc-t_'+ hash +'_'+ track.id;
+			li.className = 'sc-track';
 			li.appendChild((
 				li['_title_'] = document.createElement('a')));
 				li['_title_'].href = track.permalink_url;
@@ -405,7 +517,13 @@ SoundCloudAPI.prototype = {
 				li['_duration_'].textContent = timeCalc((track.duration /= 1000));
 		return  li;
 	}
-	function createPlayerDOM(hash) {
+	function _li(h, l) {
+		var li ='', i;
+		for (i = 0; i < l; i++)
+			li += '<span id="ft_'+h+'_'+i+'"></span>';
+		return li;
+	}
+	function createPlayerDOM(hash, len) {
 		var div = document.createElement('div');
 			div.className = 'sc-player loading';
 			div.innerHTML = '<ol class="sc-artwork-list"></ol>\n'+
@@ -415,7 +533,7 @@ SoundCloudAPI.prototype = {
 				'<div class="sc-controls">\n'+
 				'	<a href="#control" class="sc-play">Play</a>\n'+
 				'</div>\n'+
-				'<ol class="sc-trackslist"></ol>\n'+
+				'<ol class="sc-trackslist">'+ _li(hash, len) +'</ol>\n'+
 				'<a href="#info" class="sc-info-toggle">Info</a>\n'+
 				'<div class="sc-time-indicators">\n'+
 				'	<span class="sc-position"></span>&nbsp;|&nbsp;<span class="sc-duration"></span>\n'+
@@ -433,6 +551,7 @@ SoundCloudAPI.prototype = {
 		if (hash) {
 			div.id = 'sc-obj_'+ hash;
 			if (!SC['Global']) {
+				SC['Object'][hash] = { volume: SC.Volume }
 				div.addEventListener('click', onClickHandler, false);
 			}
 		}
@@ -463,7 +582,7 @@ SoundCloudAPI.prototype = {
 	
 	function updateTrackInfo(node, track) {
 		var artwork = track.artwork_url || track.user.avatar_url;
-		if (artwork && !isContain(artwork, 'avatars-000044695144-c5ssgx-large.jpg')){
+		if (artwork && artwork.indexOf('avatars-000044695144-c5ssgx-large.jpg') < 0){
 			var img = node['_artwork_'].firstElementChild || document.createElement('img');
 			if (node['_artwork_'].clientWidth > 100) {
 				var s = findBestMatch([200, 250, 300, 500], node['_artwork_'].clientWidth);
@@ -484,81 +603,6 @@ SoundCloudAPI.prototype = {
 		node['_waveform_'].appendChild(wave);
 	}
 	
-	function createSCElements(scp) {
-		var links, hash, node, info, length, index = 0;
-	
-		if (scp.href) {
-			length = 1;
-			links = [scp];
-			hash = hashCodeURL(scp.href);
-		} else if (
-			scp.firstElementChild &&
-			scp.firstElementChild.href
-		) {
-			length = scp.children.length;
-			links = scp.children;
-			hash = Math.round(Math.random() * 12345679);
-		}
-		
-		if (hash in SC['Store']) {
-			var p, n = 0;
-			while ((p = hash +'-'+ n) in SC['Store']) {
-				n++;
-			}
-			node = createPlayerDOM(p);
-			SC['Store'][p] = {tracks: SC['Store'][hash].tracks, index: 0, volume: SC.Volume}
-			SC['Store'][p].tracks.forEach(function(tr, j) {
-				node['_trackslist_'].appendChild(createTrackDOM(tr, p, j));
-			});
-		} else if (links) {
-			node = createPlayerDOM(hash);
-			SC['Store'][hash] = {tracks: [], index: 0, volume: SC.Volume };
-			SC['API'].getTrackInfo(links[0].href, funct);
-		} else {
-			node = createPlayerDOM(null);
-		}
-		
-		scp.parentNode.replaceChild(node, scp);
-		
-		function funct(data) {
-			var cUrl = links[index].href;
-			if (data) {
-				if (data.tracks || Array.isArray(data)) {
-					// log('data.tracks', data.tracks);
-					var tracks = (data.tracks || data);
-						tracks.forEach(function(tr, j) {
-							node['_trackslist_'].appendChild(createTrackDOM(tr, hash, j));
-						});
-					SC['Store'][hash].tracks = SC['Store'][hash].tracks.concat(tracks);
-				} else if (data.duration){
-					// a secret link fix, till the SC API returns permalink with secret on secret response
-					data.permalink_url = cUrl;
-					// if track, add to player
-					SC['Store'][hash].tracks.push(data);
-					node['_trackslist_'].appendChild(
-						createTrackDOM(data, hash, (SC['Store'][hash].tracks.length - 1))
-					);
-				} else if (data.creator || data.username) {
-					// get user or group tracks, or favorites
-					links[index].href = data.uri + (data.username && isContain(cUrl, 'favorites') ? '/favorites' : '/tracks');
-					index--;
-				}
-			}; index++;
-			if (!info && SC['Store'][hash].tracks.length > 0) {
-				info = SC['Store'][hash].tracks[0];
-				updateTrackInfo(node, info);
-			}
-			if (length > index) {
-				SC['API'].getTrackInfo(links[index].href, funct);
-			} else if (!info) {
-				delete SC['Store'][hash];
-				node.removeAttribute('id');
-			} else {
-				node.className = 'sc-player';
-			}
-		}
-	}
-	
 	function findBestMatch(list, toMatch) {
 		for (var item, i = 0; i < list.length; i++) {
 			if ((item = list[i]) >= toMatch) {
@@ -575,18 +619,10 @@ SoundCloudAPI.prototype = {
 			
 		return (h > 0 ? h +'.' : '') + (m > 9 || m == 0 ? m : '0'+ m) +'.'+ (s > 9 ? s : '0'+ s);
 	}
-	function hashCodeURL(uri) {
-		var hash = 0, i = 0, chr, len,
-			str = uri.replace(/^https?:\/\//, '');
-		for(len   = str.length; i < len; i++) {
-			chr   = str.charCodeAt(i);
-			hash  = ((hash << 5) - hash) + chr;
-			hash |= 0; // Convert to 32bit integer
-		}
-		return hash;
-	}
-	function isContain(str, word) {
-		return str.indexOf(word) >= 0;
+	function genGroupId() {
+		var n = Math.round(Math.random() * 12345679);
+		while (n in SC['Object']) n++;
+		return (SC['Object'][n] = n);
 	}
 	function fallback(e) {
 		if (e.preventDefault) {
