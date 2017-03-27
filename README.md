@@ -43,7 +43,25 @@ links.forEach(function(lnk) {
 });
 ```
 
-Adding custom listeners coming soon.
+Event listeners:
+```javascript
+var link = document.querySelector('a[href^="https://soundcloud.com/"]'),
+  player = SCPurePlayer.create(link); //-> return custom player element
+  
+  // possible media event type: ['play', 'pause', 'ended', 'timeupdate', 'volumechange']
+  player.addEventListener('play', function(event) {
+    /*
+      the event argument[0] is a CustomEvent object https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent
+      who includes 'detail' property with two custom keys:
+        device: { just audio element backend },
+        track: { current track info object }
+     */
+  }, false);
+
+link.parentNode.replaceChild(
+    player, link
+);
+```
 
 ## Browser compatible
 Should work on IE9+ / Opera 12.18+
