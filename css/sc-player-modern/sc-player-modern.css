@@ -173,7 +173,7 @@
 .sc-trackslist li.active a, .sc-trackslist li a {
 	color: #ddd;
 }
-.sc-trackslist:hover {
+.sc-trackslist:hover, .sc-trackslist:focus {
 	opacity: 1;
 	z-index: 1;
 }
@@ -199,7 +199,7 @@
 	height: 17px;
 	color: transparent;
 }
-.sc-info-toggle:hover {
+.sc-info-toggle:hover, .sc-player:focus .sc-info-toggle {
 	background: url('img/info-modern.svg') no-repeat center;
 	color: transparent;
 }

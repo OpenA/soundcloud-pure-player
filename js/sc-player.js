@@ -131,12 +131,27 @@ function SoundCloudAPI() {
 	
 	var SC = {
 		'API': new SoundCloudAPI,
-		'Global': true,
+		'Global': false,
 		'Volume': 0.8,
 		'Tracks': {},
-		'Object': {},
-		_listeners: {}
+		'Object': {}
 	}
+	
+	var _handler = 'ontouchstart' in window ? {
+		start: 'touchstart',
+		move: 'touchmove',
+		end: 'touchend',
+		getCoords: function(e) {
+			return (e.touches.length === 1 ? { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY } : null);
+		}
+	} : {
+		start: 'mousedown',
+		move: 'mousemove',
+		end: 'mouseup',
+		getCoords: function(e) {
+			return (e.button === 0 ? { x: e.clientX, y: e.clientY } : null);
+		}
+	};
 	
 	var _Current_ = {
 		
@@ -145,11 +160,11 @@ function SoundCloudAPI() {
 		PlayerNode : null,
 		AudioDevice: createAudioDevice(),
 		/* Complex */
-		set 'Player Volume'  (vol) {
+		set 'Player Volume' (vol) {
 			this.AudioDevice.volume = vol;
 			this.PlayerNode['_volume_'].firstElementChild.style['width'] = (vol * 100) +'%';
 		},
-		get 'Player Volume'  () {
+		get 'Player Volume' () {
 			return this.PlayerNode['_volume_'].firstElementChild.style['width'];
 		},
 		
@@ -177,17 +192,27 @@ function SoundCloudAPI() {
 			return this.PlayerNode['_buffer_'].style['width'];
 		},
 		
+		invokeEvent: function(name) {
+			this.PlayerNode.dispatchEvent(
+				new CustomEvent(name, {
+					bubbles: true, cancelable: true,
+					detail: {
+						track: this.TrackLoaded, device: this.AudioDevice
+					}
+				}));
+		},
+		
 		connect: function(player_node, track_node) {
 			
 			if (player_node && player_node !== this.PlayerNode) {
 				if (this.PlayerNode) {
-					this.PlayerNode[ '_volume_' ].onmousedown = null;
-					this.PlayerNode['_waveform_'].onmousedown = null;
+					this.PlayerNode[ '_volume_' ]['on'+ _handler.start] = null;
+					this.PlayerNode['_waveform_']['on'+ _handler.start] = null;
 				}
 				this.PlayerNode = ('_trackslist_' in player_node ? player_node : catchKeyElements('player', player_node));
-				this.PlayerNode[ '_volume_' ].onmousedown = barChanger;
-				this.PlayerNode['_waveform_'].onmousedown = barChanger;
-				this['Player Volume'] = SC['Global'] ? SC.Volume : SC['Object'][player_node.id.split('_')[1]];
+				this.PlayerNode[ '_volume_' ]['on'+ _handler.start] = barChanger;
+				this.PlayerNode['_waveform_']['on'+ _handler.start] = barChanger;
+				this['Player Volume'] = (SC['Global'] ? SC : SC['Object'][player_node.id.split('_')[1]]).Volume;
 			}
 			
 			if (!track_node) {
@@ -205,7 +230,8 @@ function SoundCloudAPI() {
 				this['Track Buffered'] = 0;
 				
 				updateTrackInfo(this.PlayerNode, this.TrackLoaded);
-				this['AudioDevice'].loadTrack(this.TrackLoaded);
+				this['AudioDevice'].src = this.TrackLoaded.stream_url + (this.TrackLoaded.stream_url.indexOf('?') >= 0 ? '&' : '?') +'consumer_key='+ SC['API'].apiKey;
+				this['AudioDevice'].play();
 			}
 		}
 	}
@@ -229,7 +255,11 @@ function SoundCloudAPI() {
 			}
 		}
 	}
-	document.addEventListener("DOMContentLoaded", onDOMReady);
+	
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', onDOMReady);
+	} else
+		onDOMReady();
 	
 	function _scCreateGroup(links) {
 		var hash = genGroupId(),
@@ -244,9 +274,9 @@ function SoundCloudAPI() {
 					tNode  = createTrackDOM(tracks[0], _$.hash),
 					tChild = _$.node['_trackslist_'].children['ft_'+ _$.hash +'_'+ _$.it];
 				
-				_$.node['_trackslist_'].replaceChild(tNode, tChild);
+				_$.node['_trackslist_'].replaceChild(tNode, tChild); ibx--;
 				
-				if (_$.it == 0) {
+				if (_$.it == 0 || !_$.node['_trackslist_'].querySelector('.active') && ibx == 0) {
 					updateTrackInfo(_$.node, tracks[0]);
 					tNode.className += ' active';
 				}
@@ -292,7 +322,7 @@ function SoundCloudAPI() {
 	}
 	
 	function onDOMReady(e) {
-		Array.prototype.slice.call(this.getElementsByClassName('sc-player'), 0).forEach(function(scp) {
+		Array.prototype.slice.call(document.getElementsByClassName('sc-player'), 0).forEach(function(scp) {
 			var node, links;
 			if (scp.href) {
 				node = _scCreate(scp);
@@ -303,15 +333,16 @@ function SoundCloudAPI() {
 			scp.parentNode.replaceChild(node, scp);
 		});
 		if (_Current_['AudioDevice'].tagName === 'OBJECT') {
-			var engineContainer = this.createElement('scont');
+			var engineContainer = document.createElement('scont');
 				engineContainer.className = 'sc-engine-container';
 				engineContainer.setAttribute('style', 'position: absolute; left: -9000px');
 				engineContainer.appendChild(_Current_['AudioDevice']);
-			this.body.appendChild(engineContainer);
+			document.body.appendChild(engineContainer);
 		}
 	}
 	function onEnd(e) {
-		 var play_next;
+		var play_next;
+		_Current_.invokeEvent('ended');
 		if ((play_next = _Current_.SelectTrack.nextElementSibling)) {
 			_Current_.connect(null, play_next);
 		} else {
@@ -328,6 +359,7 @@ function SoundCloudAPI() {
 	}
 	function onTimeUpdate(e) {
 		_Current_['Track Progress'] = e.target.currentTime;
+		_Current_.invokeEvent('timeupdate');
 	}
 	function onBufferLoad(e) {
 		if (_Current_['Track Buffered'] !== '100%') {
@@ -341,7 +373,7 @@ function SoundCloudAPI() {
 			var $target   = e.target,
 				classList = $target.className.split(' '),
 				$sc       = classList[0].split('-');
-				fallback(e);
+				e.preventDefault();
 			switch ($sc[1]) {
 				case 'info':
 					if ($sc[2] === 'close') {
@@ -359,7 +391,7 @@ function SoundCloudAPI() {
 					_Current_.connect($player, $target);
 					break;
 				case 'play':
-					var $player = !SC['Global'] ? this : $target.parentNode.parentNode;
+					var $player = $target.parentNode.parentNode;
 					if (!$player.id)
 						return;
 					_Current_.connect($player);
@@ -383,46 +415,63 @@ function SoundCloudAPI() {
 		_Current_.PlayerNode['_button_'].className   = 'sc-p'+ ype;
 		_Current_.PlayerNode['_button_'].textContent = 'P'   + ype;
 		_Current_.PlayerNode.className = 'sc-player '+ e.type + (e.type === 'play' ? 'ed' : 'd');
+		_Current_.invokeEvent(e.type);
 	}
 	function barChanger(e) {
-		if (e.button !== 0) {
+		var coords = _handler.getCoords(e);
+		if (!coords) {
 			return;
 		}
-		fallback(e);
-		switch ( e.type ) {
-			case 'mousedown':
-				this.bound = barChanger.bind(this);
-				window.addEventListener('mousemove', this.bound, false);
-				window.addEventListener('mouseup', this.bound, false);
-				this.rect = this.getBoundingClientRect();
-				this.rect.width || (this.rect.width = this.rect.right - this.rect.left);
-			case 'mousemove':
-				var x = (e.clientX - this.rect.left) / this.rect.width * 100;
-				if (this === _Current_.PlayerNode['_waveform_']) {
-					var maxs = _Current_['AudioDevice'].duration,
-						seek = x > 100 ? maxs : x < 0 ? 0 : Math.floor(maxs * x * 10000) / 1000000;
-					_Current_['AudioDevice'].ontimeupdate = null;
-					_Current_['Track Progress'] = (this.seek = seek);
+		e.preventDefault();
+		
+		var barMove, barEnd, seek, maxs, vol;
+		var rect = this.getBoundingClientRect(),
+			obj = SC['Global'] ? SC : SC['Object'][_Current_.PlayerNode.id.split('_')[1]],
+			x = (coords.x - rect.left) / ('width' in rect ? rect.width : (rect.width = rect.right - rect.left));
+			
+		if (this === _Current_.PlayerNode['_waveform_']) {
+			maxs = _Current_['AudioDevice'].duration;
+			seek = Math.max(0, Math.min(Math.floor(maxs * x * 1000000) / 1000000, maxs));
+			barMove = function(eM) {
+				x = (_handler.getCoords(eM).x - rect.left) / rect.width;
+				seek = Math.max(0, Math.min(Math.floor(maxs * x * 1000000) / 1000000, maxs));
+				_Current_['AudioDevice'].ontimeupdate = null;
+				_Current_['Track Progress'] = obj.Progress = seek;
+			}
+			barEnd = function(eE) {
+				_Current_['Track Progress'] = obj.Progress = seek;
+				_Current_['AudioDevice'].currentTime  = seek;
+				_Current_['AudioDevice'].ontimeupdate = onTimeUpdate;
+				window.removeEventListener(_handler.move, barMove, false);
+				window.removeEventListener(eE.type, barEnd, false);
+			}
+		} else if (this === _Current_.PlayerNode['_volume_']) {
+			vol = Math.max(0, Math.min(Math.round(x * 100) / 100, 1));
+			barMove = function(eM) {
+				x = (_handler.getCoords(eM).x - rect.left) / rect.width;
+				vol = Math.max(0, Math.min(Math.round(x * 100) / 100, 1));
+				if (obj.Volume * 100 !== vol * 100) {
+					_Current_['Player Volume'] = obj.Volume = vol;
+					_Current_.invokeEvent('volumechange');
 				}
-				if (this === _Current_.PlayerNode['_volume_']) {
-					var vol = x > 100 ? 1 : x < 0 ? 0 : Math.round(x / 10) / 10;
-					_Current_['Player Volume'] = (SC.Volume = vol);
+			}
+			barEnd = function(eE) {
+				if (obj.Volume * 100 !== vol * 100) {
+					_Current_['Player Volume'] = obj.Volume = vol;
+					_Current_.invokeEvent('volumechange');
 				}
-				break;
-			case 'mouseup':
-				if (this === _Current_.PlayerNode['_waveform_']) {
-					_Current_['AudioDevice'].currentTime  = this.seek;
-					_Current_['AudioDevice'].ontimeupdate = onTimeUpdate;
-				}
-				window.removeEventListener('mousemove', this.bound, false);
-				window.removeEventListener('mouseup', this.bound, false);
+				window.removeEventListener(_handler.move, barMove, false);
+				window.removeEventListener(eE.type, barEnd, false);
+			}
 		}
+		window.addEventListener(_handler.move, barMove, false);
+		window.addEventListener(_handler.end, barEnd, false);
 	}
 	
 	function createAudioDevice(url) {
 		var audio, html5, flash;
 		if (typeof HTMLAudioElement !== 'undefined') {
-			audio = new Audio();
+			audio = new Audio;
 			html5 = audio.canPlayType && (/maybe|probably/).test(audio.canPlayType('audio/mpeg'));
 		}
 		if (!html5) {
@@ -430,34 +479,32 @@ function SoundCloudAPI() {
 			audio.id     = 'scPlayerEngine';
 			audio.height = '1';
 			audio.width  = '1';
-			audio.type   = "application/x-shockwave-flash"
-			audio.data   = "/js/player_mp3_js.swf"
+			audio.type   = 'application/x-shockwave-flash';
+			audio.data   = '/js/player_mp3_js.swf';
 			audio.innerHTML = '<param name="movie" value="/js/player_mp3_js.swf" /><param name="AllowScriptAccess" value="always" /><param name="FlashVars" value="listener=flashBack2343191116fr_scEngine&interval=500" />';
 			
 			flash = (window['flashBack2343191116fr_scEngine'] = new Object());
 			flash.onInit = function() {
 				Object.defineProperties(audio, {
-					loadTrack   : { value: function(trk) {
-						this.SetVariable("method:setUrl",
-							trk.stream_url + (trk.stream_url.indexOf('?') >= 0 ? '&' : '?') +'consumer_key='+ SC['API'].apiKey);
-						this.play(); }},
 					play        : { value: function()    {
 						flash.status = 'process';
-						this.SetVariable("method:play", "");
-						this.SetVariable("enabled", "true");
+						this.SetVariable('method:play', '');
+						this.SetVariable('enabled', 'true');
 						onPlayerAction({type: 'play'}); }},
 					pause       : { value: function()    {
 						flash.status = 'waiting';
-						this.SetVariable("method:pause", "");
+						this.SetVariable('method:pause', '');
 						onPlayerAction({type: 'pause'}); }},
-					stop        : { value: function()  { this.SetVariable("method:stop", "") }},
+					//stop        : { value: function()  { this.SetVariable('method:stop', '') }},
+					src         : { get: function()    { return this.url },
+								    set: function(url) { this.SetVariable('method:setUrl', url) }},
 					ended       : { get: function()    { return flash.status === 'ended' }},
 					playing     : { get: function()    { return JSON.parse(flash.isPlaying); }},
 					duration    : { get: function()    { return Number(flash.duration) / 1000 || 0 }},
 					currentTime : { get: function()    { return Number(flash.position) / 1000 || 0 },
-								    set: function(rel) { this.SetVariable("method:setPosition", (rel * 1000)) }},
+								    set: function(rel) { this.SetVariable('method:setPosition', (rel * 1000)) }},
 					volume      : { get: function()    { return Number(flash.volume) / 100 },
-								    set: function(vol) { this.SetVariable("method:setVolume", (vol * 100)) }},
+								    set: function(vol) { this.SetVariable('method:setVolume', (vol * 100)) }},
 					ontimeupdate: { set: function(fn)  { flash.onTimeUpdate = fn || function(){} }}
 				});
 				audio['volume'] = SC.Volume;
@@ -479,13 +526,8 @@ function SoundCloudAPI() {
 			};
 		} else {
 			Object.defineProperties(audio, {
-				stop      : { value: function()    { this.pause(); this.currentTime = 0; }},
-				bytesPercent: { get: function()    { return ((this.buffered.length && this.buffered.end(0)) / this.duration) * 100; }},
-				loadTrack : { value: function(trk) {
-					this.pause();
-					this.src = trk.stream_url + (trk.stream_url.indexOf('?') >= 0 ? '&' : '?') +'consumer_key='+ SC['API'].apiKey;
-					this.play();
-				}}
+				//stop      : { value: function()    { this.pause(); this.currentTime = 0; }},
+				bytesPercent: { get: function()    { return ((this.buffered.length && this.buffered.end(0)) / this.duration) * 100; }}
 			});
 			audio['volume'] = SC.Volume;
 			audio['onplay'] = audio['onpause'] = onPlayerAction;
@@ -551,7 +593,7 @@ function SoundCloudAPI() {
 		if (hash) {
 			div.id = 'sc-obj_'+ hash;
 			if (!SC['Global']) {
-				SC['Object'][hash] = { volume: SC.Volume }
+				SC['Object'][hash] = { Volume: SC.Volume }
 				div.addEventListener('click', onClickHandler, false);
 			}
 		}
@@ -604,11 +646,9 @@ function SoundCloudAPI() {
 	}
 	
 	function findBestMatch(list, toMatch) {
-		for (var item, i = 0; i < list.length; i++) {
-			if ((item = list[i]) >= toMatch) {
-				return item;
-			}
-		}
+		var item, i = 0, len = list.length;
+		while (i < len && (item = list[i]) < toMatch)
+			i++;
 		return item;
 	}
 	function timeCalc(secn) {
@@ -624,11 +664,9 @@ function SoundCloudAPI() {
 		while (n in SC['Object']) n++;
 		return (SC['Object'][n] = n);
 	}
-	function fallback(e) {
-		if (e.preventDefault) {
-			e.preventDefault();
-		} else {
-			e.returnValue = false;
-		}
+	if (!('preventDefault' in Event.prototype)) {
+		Event.prototype.preventDefault = function() {
+			this.returnValue = false;
+		};
 	}
 })();
