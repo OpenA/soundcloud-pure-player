@@ -242,22 +242,14 @@ function SoundCloudAPI() {
 	
 	window.SCPurePlayer = {
 		create: _scCreate,
-		createGroup: _scCreateGroup,
-		off: function(name, callback, idx) {
-			if (SC._listeners[name] && (idx = SC._listeners[name].indexOf(callback)) !== -1) {
-				delete SC._listeners[name][idx];
-				       SC._listeners[name].splice(idx, 1);
-			}
-		},
-		on : function(name, callback) {
-			if (name in SC._listeners) {
-				SC._listeners[name].push(callback);
-			}
-		}
+		createGroup: _scCreateGroup
 	}
 	
 	if (document.readyState === 'loading') {
-		document.addEventListener('DOMContentLoaded', onDOMReady);
+		document.addEventListener('DOMContentLoaded', function(e){
+			this.removeEventListener(e.type, arguments.callee, false);
+			onDOMReady();
+		}, false);
 	} else
 		onDOMReady();
 	
@@ -288,9 +280,17 @@ function SoundCloudAPI() {
 				}
 			}.bind(exp), function(error) {
 				ibx--;
-				    this.node['_trackslist_'].children['ft_'+ this.hash +'_'+ this.it].remove();
-				if (this.node['_trackslist_'].children.length == 0 && ibx == 0)
-				    this.node.removeAttribute('id');
+				this.node['_trackslist_'].children['ft_'+ this.hash +'_'+ this.it].remove();
+				if (ibx == 0) {
+					if (this.node['_trackslist_'].children.length == 0) {
+						this.node.removeAttribute('id');
+					} else if (!
+						this.node['_trackslist_'].querySelector('.active')) {
+						var tNode = this.node['_trackslist_'].firstElementChild;
+						updateTrackInfo(this.node, SC['Tracks'][tNode.id.split('_')[2]]);
+						tNode.className += ' active';
+					}
+				}
 			}.bind(exp));
 		}
 		
