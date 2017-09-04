@@ -7,7 +7,8 @@
 	margin: 5px;
 }
 
-.super .sc-player ol, .super .sc-player li {
+.super .sc-player ol,
+.super .sc-player li {
 	margin: 0;
 	padding: 0;
 	list-style-position: inside;
@@ -50,10 +51,10 @@
 	left: 180px
 }
 
-.super .sc-controls a {
-	display: block;
+.super .sc-controls > * {
 	width: 50px;
 	height: 50px;
+	cursor: pointer;
 }
 
 /* Scrubber */
@@ -114,7 +115,7 @@
 	top: 3px;
 }
 
-/* Track info*/
+/* Track info */
 
 .super .sc-info {
 	position: absolute;
@@ -126,8 +127,8 @@
 }
 
 .super .sc-info.active {
+	overflow: auto;
 	z-index: 1;
-	overflow: auto:
 }
 
 .super .sc-info p {
@@ -140,12 +141,14 @@
 	position: absolute;
 	top: 43px;
 	left: 670px;
+	cursor: pointer;
 }
 
 .super .sc-info-close {
 	position: absolute;
 	top: 10px;
 	right: 20px;
+	cursor: pointer;
 }
 
 .super .sc-info h3 {
@@ -162,11 +165,22 @@
 	left: 240px;
 	opacity: 0.5;
 }
-.super .sc-info p, .super .sc-info .sc-info-close {
+
+.super .sc-download {
+	position: absolute;
+	top: 10px;
+	left: 20px;
+}
+
+.super .sc-info p,
+.super .sc-info .sc-info-close,
+.super .sc-info .sc-download {
 	visibility: hidden;
 }
 
-.super .sc-info.active p, .super .sc-info.active .sc-info-close {
+.super .sc-info.active p,
+.super .sc-info.active .sc-info-close,
+.super .sc-info.active .sc-download {
 	visibility: visible;
 }
 

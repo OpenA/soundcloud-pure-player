@@ -51,10 +51,10 @@
 	left: 180px
 }
 
-.sc-controls a {
-	display: block;
+.sc-controls > * {
 	width: 50px;
 	height: 50px;
+	cursor: pointer;
 }
 
 /* Scrubber */
@@ -127,8 +127,8 @@
 }
 
 .sc-info.active {
+	overflow: auto;
 	z-index: 1;
-	overflow: auto:
 }
 
 .sc-info p {
@@ -141,12 +141,14 @@
 	position: absolute;
 	top: 43px;
 	left: 670px;
+	cursor: pointer;
 }
 
 .sc-info-close {
 	position: absolute;
 	top: 10px;
 	right: 20px;
+	cursor: pointer;
 }
 
 .sc-info h3 {
@@ -164,13 +166,21 @@
 	opacity: 0.5;
 }
 
+.sc-download {
+	position: absolute;
+	top: 10px;
+	left: 20px;
+}
+
 .sc-info p,
-.sc-info .sc-info-close{
+.sc-info .sc-info-close,
+.sc-info .sc-download {
 	visibility: hidden;
 }
 
 .sc-info.active p,
-.sc-info.active .sc-info-close {
+.sc-info.active .sc-info-close,
+.sc-info.active .sc-download {
 	visibility: visible;
 }
 

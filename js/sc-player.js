@@ -45,7 +45,7 @@ function SoundCloudAPI() {
 			}) : null);
 		}
 		
-		var protocol = (document.location.protocol === 'https:' ? 'https:' : 'http:'),
+		var protocol = (location.protocol === 'https:' ? 'https:' : 'http:'),
 			resolve = protocol +'//api.soundcloud.com/resolve?url=',
 			params = 'format=json&consumer_key='+ _$.apiKey, apiUrl;
 			
@@ -152,16 +152,30 @@ function SoundCloudAPI() {
 			return (e.button === 0 ? { x: e.clientX, y: e.clientY } : null);
 		}
 	};
+
+	var _frameDownload = {
+		iframe: null,
+		open: function(uri) {
+			if (!this.iframe) {
+				this.iframe = document.createElement('iframe');
+				this.iframe.width = this.iframe.height = 1;
+				this.iframe.setAttribute('style', 'position: absolute; left: -9000px');
+				document.body.appendChild(this.iframe).frameBorder = 0;
+			}
+			this.iframe.src = uri;
+		}
+	}	
 	
 	var _Current_ = {
 		
+		SavedState : null,
 		TrackLoaded: null,
 		SelectTrack: null,
 		PlayerNode : null,
 		AudioDevice: createAudioDevice(),
 		/* Complex */
 		set 'Player Volume' (vol) {
-			this.AudioDevice.volume = vol;
+			this.AudioDevice.volume = this.SavedState.Volume = vol;
 			this.PlayerNode['_volume_'].firstElementChild.style['width'] = (vol * 100) +'%';
 		},
 		get 'Player Volume' () {
@@ -178,8 +192,9 @@ function SoundCloudAPI() {
 		},
 		
 		set 'Track Progress' (sec) {
+			this.SavedState.Progress = sec;
 			this.PlayerNode['_position_'].textContent = timeCalc(sec);
-			this.PlayerNode['_progress_'].style['width'] = (sec / this.AudioDevice.duration * 100) +'%';
+			this.PlayerNode['_progress_'].style['width'] = (sec / this.TrackLoaded.duration * 100) +'%';
 		},
 		get 'Track Progress' () {
 			return this.PlayerNode['_progress_'].style['width'];
@@ -202,7 +217,11 @@ function SoundCloudAPI() {
 				}));
 		},
 		
-		connect: function(player_node, track_node) {
+		connect: function(player_node, track_node, saved_state) {
+			
+			if (saved_state) {
+				this.SavedState = saved_state;
+			}
 			
 			if (player_node && player_node !== this.PlayerNode) {
 				if (this.PlayerNode) {
@@ -212,7 +231,7 @@ function SoundCloudAPI() {
 				this.PlayerNode = ('_trackslist_' in player_node ? player_node : catchKeyElements('player', player_node));
 				this.PlayerNode[ '_volume_' ]['on'+ _handler.start] = barChanger;
 				this.PlayerNode['_waveform_']['on'+ _handler.start] = barChanger;
-				this['Player Volume'] = (SC['Global'] ? SC : SC['Object'][player_node.id.split('_')[1]]).Volume;
+				this['Player Volume'] = this.SavedState.Volume;
 			}
 			
 			if (!track_node) {
@@ -224,13 +243,13 @@ function SoundCloudAPI() {
 				track_node.className = 'sc-track active';
 				
 				this.SelectTrack = ('_duration_' in track_node ? track_node : catchKeyElements('track', track_node));
-				this.TrackLoaded = SC['Tracks'][track_node.id.split('_')[2]];
+				this.TrackLoaded = SC['Tracks'][track_node.id.slice(track_node.id.lastIndexOf('_') + 1)];
 				
-				this['Track Progress'] = 0;
 				this['Track Buffered'] = 0;
 				
 				updateTrackInfo(this.PlayerNode, this.TrackLoaded);
 				this['AudioDevice'].src = this.TrackLoaded.stream_url + (this.TrackLoaded.stream_url.indexOf('?') >= 0 ? '&' : '?') +'consumer_key='+ SC['API'].apiKey;
+				this['AudioDevice'].currentTime = this.SavedState.Progress;
 				this['AudioDevice'].play();
 			}
 		}
@@ -246,7 +265,7 @@ function SoundCloudAPI() {
 	}
 	
 	if (document.readyState === 'loading') {
-		document.addEventListener('DOMContentLoaded', function(e){
+		document.addEventListener('DOMContentLoaded', function(e) {
 			this.removeEventListener(e.type, arguments.callee, false);
 			onDOMReady();
 		}, false);
@@ -254,71 +273,71 @@ function SoundCloudAPI() {
 		onDOMReady();
 	
 	function _scCreateGroup(links) {
-		var hash = genGroupId(),
-			node = createPlayerDOM(hash, links.length),
-			ibx  = links.length, exp, i;
+		var $hash = genGroupId(),
+			$node = createPlayerDOM($hash, links.length),
+			ibx   = links.length;
 		
-		for (i = 0; i < links.length; i++) {
-			exp = { hash: hash, node: node, it: i };
+		Array.prototype.slice.call(links, 0).forEach(function(link, it) {
 			
-			SC['API'].getTracks(links[i].href, function(tracks) {
-				var _$     = this,
-					tNode  = createTrackDOM(tracks[0], _$.hash),
-					tChild = _$.node['_trackslist_'].children['ft_'+ _$.hash +'_'+ _$.it];
+			SC['API'].getTracks(link.href, function(tracks)
+			{ ibx--;
 				
-				_$.node['_trackslist_'].replaceChild(tNode, tChild); ibx--;
+				var tNode  = createTrackDOM(tracks[0], $hash),
+					tChild = $node['_trackslist_'].children['ft_'+ $hash +'_'+ it];
 				
-				if (_$.it == 0 || !_$.node['_trackslist_'].querySelector('.active') && ibx == 0) {
-					updateTrackInfo(_$.node, tracks[0]);
+				$node['_trackslist_'].replaceChild(tNode, tChild);
+				
+				if (it === 0 || ibx === 0 && !$node['_trackslist_'].querySelector('.active')) {
+					updateTrackInfo($node, tracks[0]);
 					tNode.className += ' active';
 				}
 				
-				for (var n = 1; n < tracks.length; n++) {
+				for (var j = 1; j < tracks.length; j++) {
 					tChild = tNode.nextSibling;
-					tNode  = createTrackDOM(tracks[n], _$.hash);
-					_$.node['_trackslist_'].insertBefore(tNode, tChild);
+					tNode  = createTrackDOM(tracks[j], $hash);
+					$node['_trackslist_'].insertBefore(tNode, tChild);
 				}
-			}.bind(exp), function(error) {
-				ibx--;
-				this.node['_trackslist_'].children['ft_'+ this.hash +'_'+ this.it].remove();
-				if (ibx == 0) {
-					if (this.node['_trackslist_'].children.length == 0) {
-						this.node.removeAttribute('id');
-					} else if (!
-						this.node['_trackslist_'].querySelector('.active')) {
-						var tNode = this.node['_trackslist_'].firstElementChild;
-						updateTrackInfo(this.node, SC['Tracks'][tNode.id.split('_')[2]]);
+			}, function(error)
+			{ ibx--;
+				
+				$node['_trackslist_'].children['ft_'+ $hash +'_'+ it].remove();
+				if (ibx === 0) {
+					if ($node['_trackslist_'].children.length == 0) {
+						$node.removeAttribute('id');
+					}
+					else if (!$node['_trackslist_'].querySelector('.active')) {
+						var tNode = $node['_trackslist_'].firstElementChild;
+						updateTrackInfo($node, SC['Tracks'][tNode.id.split('_')[2]]);
 						tNode.className += ' active';
 					}
 				}
-			}.bind(exp));
-		}
+			});
+		});
 		
-		return node;
+		return $node;
 	}
 	
 	function _scCreate(link) {
-		var hash = genGroupId(),
-			node = createPlayerDOM(hash),
-			exp = { hash: hash, node: node };
-		
+		var $hash = genGroupId(),
+			$node = createPlayerDOM($hash);
+			
 		SC['API'].getTracks(link.href, function(tracks){
-			var _$ = this;
-			tracks.forEach(function(track, j) {
-				var tNode = createTrackDOM(track, _$.hash);
+			for (var j = 0; j < tracks.length; j++) {
+				var tNode = createTrackDOM(tracks[j], $hash);
 				
-				_$.node['_trackslist_'].insertBefore(tNode, _$.node['_trackslist_'].childNodes[j]);
-				
-				if (j == 0) {
-					updateTrackInfo(_$.node, track);
+				$node['_trackslist_'].insertBefore(
+					tNode, $node['_trackslist_'].children[j]
+				);
+				if (j === 0) {
+					updateTrackInfo($node, tracks[j]);
 					tNode.className += ' active';
 				}
-			});
-		}.bind(exp), function(error) {
-			this.node.removeAttribute('id');
-		}.bind(exp));
+			}
+		}, function(error) {
+			$node.removeAttribute('id');
+		});
 		
-		return node;
+		return $node;
 	}
 	
 	function onDOMReady(e) {
@@ -342,7 +361,8 @@ function SoundCloudAPI() {
 	}
 	function onEnd(e) {
 		var play_next;
-		_Current_.invokeEvent('ended');
+			_Current_.SavedState.Progress = 0;
+			_Current_.invokeEvent('ended');
 		if ((play_next = _Current_.SelectTrack.nextElementSibling)) {
 			_Current_.connect(null, play_next);
 		} else {
@@ -351,9 +371,9 @@ function SoundCloudAPI() {
 			_Current_.PlayerNode.className = 'sc-player';
 			_Current_.SelectTrack.className = 'sc-track';
 			_Current_.PlayerNode['_trackslist_'].children[0].className = 'sc-track active';
-			if ((play_next = _Current_.PlayerNode.nextElementSibling) &&
+			if ((play_next = _Current_.PlayerNode.nextElementSibling) && play_next.id &&
 				 play_next.className.substring(0, 9) === 'sc-player') {
-					_Current_.connect(play_next);
+					_Current_.connect(play_next, null, SC['Object'][play_next.id.slice(play_next.id.indexOf('_') + 1)]);
 			}
 		}
 	}
@@ -370,11 +390,14 @@ function SoundCloudAPI() {
 		if (e.button != 0 || !e.target.className)
 			return;
 		if (e.target.className.slice(0, 3) === 'sc-') {
-			var $target   = e.target,
-				classList = $target.className.split(' '),
-				$sc       = classList[0].split('-');
+			var $target = e.target,
+				$class  = $target.classList || $target.className.split(' '),
+				$sc     = $class[0].split('-');
 				e.preventDefault();
 			switch ($sc[1]) {
+				case 'download':
+					_frameDownload.open($target.href);
+					break;
 				case 'info':
 					if ($sc[2] === 'close') {
 						$target.parentNode.className = 'sc-info';
@@ -383,18 +406,20 @@ function SoundCloudAPI() {
 					}
 					break;
 				case 'track':
-					var $player = $target.parentNode.parentNode, $Id, $track;
+					var $player = $target.parentNode.parentNode;
 					if ($sc[2]) {
 						$player = $player.parentNode;
 						$target = $target.parentNode;
 					}
-					_Current_.connect($player, $target);
+					var $obj = SC['Object'][$player.id.slice($player.id.indexOf('_') + 1)];
+						$obj.Progress = 0;
+					_Current_.connect($player, $target, $obj);
 					break;
 				case 'play':
 					var $player = $target.parentNode.parentNode;
 					if (!$player.id)
 						return;
-					_Current_.connect($player);
+					_Current_.connect($player, null, SC['Object'][$player.id.slice($player.id.indexOf('_') + 1)]);
 				case 'pause':
 					_Current_.AudioDevice[$sc[1]]();
 			}
@@ -424,42 +449,43 @@ function SoundCloudAPI() {
 		}
 		e.preventDefault();
 		
-		var barMove, barEnd, seek, maxs, vol;
+		var barMove, barEnd;
 		var rect = this.getBoundingClientRect(),
-			obj = SC['Global'] ? SC : SC['Object'][_Current_.PlayerNode.id.split('_')[1]],
 			x = (coords.x - rect.left) / ('width' in rect ? rect.width : (rect.width = rect.right - rect.left));
 			
 		if (this === _Current_.PlayerNode['_waveform_']) {
-			maxs = _Current_['AudioDevice'].duration;
-			seek = Math.max(0, Math.min(Math.floor(maxs * x * 1000000) / 1000000, maxs));
+			var maxs = _Current_.TrackLoaded.duration,
+				seek = x > 1 ? maxs : x < 0 ? 0 : Math.floor(maxs * x * 1000000) / 1000000;
+			_Current_['AudioDevice'].ontimeupdate = null;
+			_Current_['Track Progress'] = seek;
 			barMove = function(eM) {
+				maxs = _Current_.TrackLoaded.duration;
 				x = (_handler.getCoords(eM).x - rect.left) / rect.width;
-				seek = Math.max(0, Math.min(Math.floor(maxs * x * 1000000) / 1000000, maxs));
-				_Current_['AudioDevice'].ontimeupdate = null;
-				_Current_['Track Progress'] = obj.Progress = seek;
+				seek = x > 1 ? maxs : x < 0 ? 0 : Math.floor(maxs * x * 1000000) / 1000000;
+				_Current_['Track Progress'] = seek;
 			}
 			barEnd = function(eE) {
-				_Current_['Track Progress'] = obj.Progress = seek;
-				_Current_['AudioDevice'].currentTime  = seek;
 				_Current_['AudioDevice'].ontimeupdate = onTimeUpdate;
+				_Current_['AudioDevice'].currentTime  = seek;
 				window.removeEventListener(_handler.move, barMove, false);
 				window.removeEventListener(eE.type, barEnd, false);
 			}
 		} else if (this === _Current_.PlayerNode['_volume_']) {
-			vol = Math.max(0, Math.min(Math.round(x * 100) / 100, 1));
+			var vol = x > 1 ? 1 : x < 0 ? 0 : Math.round(x * 1000) / 1000,
+				sav = _Current_.SavedState.Volume;
+			if (sav > vol || sav < vol) {
+				_Current_.invokeEvent('volumechange');
+			}
+			_Current_['Player Volume'] = (sav = vol);
 			barMove = function(eM) {
 				x = (_handler.getCoords(eM).x - rect.left) / rect.width;
-				vol = Math.max(0, Math.min(Math.round(x * 100) / 100, 1));
-				if (obj.Volume * 100 !== vol * 100) {
-					_Current_['Player Volume'] = obj.Volume = vol;
+				vol = x > 1 ? 1 : x < 0 ? 0 : Math.round(x * 1000) / 1000;
+				if (sav > vol || sav < vol) {
 					_Current_.invokeEvent('volumechange');
 				}
+				_Current_['Player Volume'] = vol;
 			}
 			barEnd = function(eE) {
-				if (obj.Volume * 100 !== vol * 100) {
-					_Current_['Player Volume'] = obj.Volume = vol;
-					_Current_.invokeEvent('volumechange');
-				}
 				window.removeEventListener(_handler.move, barMove, false);
 				window.removeEventListener(eE.type, barEnd, false);
 			}
@@ -525,20 +551,28 @@ function SoundCloudAPI() {
 				}
 			};
 		} else {
-			Object.defineProperties(audio, {
-				//stop      : { value: function()    { this.pause(); this.currentTime = 0; }},
-				bytesPercent: { get: function()    { return ((this.buffered.length && this.buffered.end(0)) / this.duration) * 100; }}
-			});
+			var _BufferLoad = null;
 			audio['volume'] = SC.Volume;
 			audio['onplay'] = audio['onpause'] = onPlayerAction;
 			audio['onended'] = onEnd;
 			audio['ontimeupdate'] = onTimeUpdate;
-			audio.addEventListener('timeupdate', onBufferLoad, false);
-			audio['onprogress'] = onBufferLoad;
+			audio['onerror'] = function(e) {
+				clearInterval(_BufferLoad);
+			};
 			audio['onloadedmetadata'] = function(e) {
+				clearInterval(_BufferLoad);
 				if (_Current_.TrackLoaded.duration !== this.duration) {
 					_Current_['Track Duration'] = this.duration;
 				}
+				_BufferLoad = setInterval(function() {
+					if (audio.buffered.length > 0) {
+						var bytesPercent = audio.buffered.end(audio.buffered.length - 1) / audio.duration;
+						if (bytesPercent === 1) {
+							clearInterval(_BufferLoad);
+						}
+						_Current_['Track Buffered'] = bytesPercent * 100;
+					}
+				}, 100);
 			};
 		}
 		return audio;
@@ -569,14 +603,14 @@ function SoundCloudAPI() {
 		var div = document.createElement('div');
 			div.className = 'sc-player loading';
 			div.innerHTML = '<ol class="sc-artwork-list"></ol>\n'+
-				'<div class="sc-info"><h3></h3><h4></h4><p></p>\n'+
-				'	<a href="#x" class="sc-info-close">X</a>\n'+
+				'<div class="sc-info"><h3></h3><h4></h4><p></p><a class="sc-download">&gt;&gt;Download&lt;&lt;</a>\n'+
+				'	<div class="sc-info-close">X</div>\n'+
 				'</div>\n'+
 				'<div class="sc-controls">\n'+
-				'	<a href="#control" class="sc-play">Play</a>\n'+
+				'	<div class="sc-play">Play</div>\n'+
 				'</div>\n'+
 				'<ol class="sc-trackslist">'+ _li(hash, len) +'</ol>\n'+
-				'<a href="#info" class="sc-info-toggle">Info</a>\n'+
+				'<div class="sc-info-toggle">Info</div>\n'+
 				'<div class="sc-time-indicators">\n'+
 				'	<span class="sc-position"></span>&nbsp;|&nbsp;<span class="sc-duration"></span>\n'+
 				'</div>\n'+
@@ -593,8 +627,14 @@ function SoundCloudAPI() {
 		if (hash) {
 			div.id = 'sc-obj_'+ hash;
 			if (!SC['Global']) {
-				SC['Object'][hash] = { Volume: SC.Volume }
+				SC['Object'][hash] = { Volume: SC.Volume, Progress: 0 }
 				div.addEventListener('click', onClickHandler, false);
+			} else {
+				SC['Object'][hash] = {
+					get Volume() { return SC.Volume; },
+					set Volume(v) { SC.Volume = v; },
+					get Progress() { return 0; }
+				}
 			}
 		}
 		return catchKeyElements('player', div);
@@ -636,9 +676,11 @@ function SoundCloudAPI() {
 		node['_info_'].children[0].innerHTML = '<a href="' + track.permalink_url +'">' + track.title + '</a>';
 		node['_info_'].children[1].innerHTML = 'by <a href="' + track.user.permalink_url +'">' + track.user.username + '</a>';
 		node['_info_'].children[2].innerHTML = (track.description || 'no Description');
+		node['_info_'].children[3].href = track.download_url +'?consumer_key='+ SC['API'].apiKey;
+		node['_info_'].children[3].hidden = !track.downloadable;
 		// update the track duration in the progress bar
 		node['_duration_'].textContent = timeCalc(track.duration);
-		node['_position_'].textContent = '0.00';
+		node['_position_'].textContent = '00.00';
 		// put the waveform into the progress bar
 		var wave = node['_waveform_'].firstElementChild || document.createElement('img');
 			wave.src = track.waveform_url;
@@ -657,7 +699,7 @@ function SoundCloudAPI() {
 			m = Math.floor(secn / 60) % 60;
 			h = Math.floor(secn / (60 * 60));
 			
-		return (h > 0 ? h +'.' : '') + (m > 9 || m == 0 ? m : '0'+ m) +'.'+ (s > 9 ? s : '0'+ s);
+		return (h > 0 ? h +'.' : '') + (m < 10 && m > -1 ? '0'+ m : m) +'.'+ (s < 10 && s > -1 ? '0'+ s : s);
 	}
 	function genGroupId() {
 		var n = Math.round(Math.random() * 12345679);

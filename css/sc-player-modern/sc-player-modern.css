@@ -78,22 +78,17 @@
 	background-color: #333;
 	opacity: .9;
 }
-.sc-controls a {
-	display: block;
+.sc-controls > * {
 	width: 50px;
 	height: 50px;
-}
-.sc-controls a, .sc-controls a:hover {
 	color: transparent;
+	cursor: pointer;
 }
 .sc-play {
 	background: url('img/play-modern.svg') no-repeat center;
 }
 .sc-pause {
 	background: url('img/pause-modern.svg') no-repeat center;
-}
-.played .sc-pause {
-	display: block;
 }
 
 /*******************************/
@@ -198,6 +193,7 @@
 	width: 17px;
 	height: 17px;
 	color: transparent;
+	cursor: pointer;
 }
 .sc-info-toggle:hover, .sc-player:focus .sc-info-toggle {
 	background: url('img/info-modern.svg') no-repeat center;
@@ -209,14 +205,15 @@
 	right: 5px;
 	padding: 1px 4px;
 	color: gray;
+	cursor: pointer;
 }
 .sc-info-close:hover {
 	color: white;
 }
-.sc-info h3 a, .sc-info h4 a, .sc-info p a {
+.sc-info a {
 	color: #95bcce;
 }
-.sc-info h3 a:hover, .sc-info h4 a:hover, .sc-info p a:hover {
+.sc-info a:hover {
 	color: #5e7681;
 }
 .sc-info p a {
@@ -254,7 +251,6 @@
 .sc-volume-slider,
 .sc-player .hidden,
 .sc-waveform-container img,
-.sc-no-artwork,
-.sc-pause {
+.sc-no-artwork {
 	display: none;
 }

@@ -57,6 +57,7 @@
 	position: absolute;
 	width: 100%;
 }
+
 /* Controls */
 
 .orange .sc-controls {
@@ -77,8 +78,7 @@
 	background: -webkit-gradient(linear, top right, left bottom, from(#e74c14), to(#f6a400));
 }
 
-.orange .sc-controls a,
-.orange .sc-controls a:hover {
+.orange .sc-controls > * {
 	color: transparent;
 }
 
@@ -128,9 +128,7 @@
 	text-decoration: underline;
 }
 
-.orange .sc-info h3 a:hover,
-.orange .sc-info h4 a:hover,
-.orange .sc-info p a:hover {
+.orange .sc-info a:hover {
 	color: #f6a400;
 }
 
@@ -161,7 +159,7 @@
 	color: #e74c14;
 }
 
-/* volume control */
+/* Volume control */
 
 .orange .sc-volume-slider {
 	background-color: #e5e5e5;

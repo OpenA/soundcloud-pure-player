@@ -78,8 +78,7 @@
 	background: -webkit-gradient(linear, top right, left bottom, from(#e74c14), to(#f6a400));
 }
 
-.sc-controls a,
-.sc-controls a:hover {
+.sc-controls > * {
 	color: transparent;
 }
 
@@ -136,9 +135,7 @@
 	text-decoration: underline;
 }
 
-.sc-info h3 a:hover,
-.sc-info h4 a:hover,
-.sc-info p a:hover {
+.sc-info a:hover {
 	color: #f6a400;
 }
 

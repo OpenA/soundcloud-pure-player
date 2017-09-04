@@ -7,7 +7,8 @@
 	margin: 5px;
 }
 
-.horizontal .sc-player ol, .horizontal .sc-player li {
+.horizontal .sc-player ol,
+.horizontal .sc-player li {
 	margin: 0;
 	padding: 0;
 	list-style-position: inside;
@@ -54,11 +55,10 @@
 	left: 25%;
 }
 
-.horizontal .sc-controls a {
-	display: block;
+.horizontal .sc-controls > * {
 	width: 50px;
 	height: 50px;
-	border-radius: 100%;
+	cursor: pointer;
 }
 
 /* Scrubber */
@@ -79,7 +79,8 @@
 	position: relative;
 }
 
-.horizontal .sc-buffer, .sc-played {
+.horizontal .sc-buffer,
+.horizontal .sc-played {
 	position: absolute;
 	height: 30px;
 	top: 0;
@@ -96,7 +97,8 @@
 	bottom: 10px;
 }
 
-.horizontal .sc-player.played .sc-time-indicators, .horizontal .sc-player.paused .sc-time-indicators {
+.horizontal .sc-player.played .sc-time-indicators,
+.horizontal .sc-player.paused .sc-time-indicators {
 	bottom: 55px;
 }
 
@@ -144,19 +146,25 @@
 	position: absolute;
 	top: 10px;
 	left: 10px;
+	cursor: pointer;
 }
 
 .horizontal .sc-info-close {
 	position: absolute;
 	top: 10px;
 	right: 10px;
+	cursor: pointer;
 }
 
-.horizontal .sc-info, .horizontal .sc-info-toggle.active, .horizontal .sc-player .sc-scrubber {
+.horizontal .sc-info,
+.horizontal .sc-info-toggle.active,
+.horizontal .sc-player .sc-scrubber {
 	visibility: hidden;
 }
 
-.horizontal .sc-info.active, .horizontal .sc-player.played .sc-scrubber, .horizontal .sc-player.paused .sc-scrubber {
+.horizontal .sc-info.active,
+.horizontal .sc-player.played .sc-scrubber,
+.horizontal .sc-player.paused .sc-scrubber {
 	visibility: visible;
 }
 

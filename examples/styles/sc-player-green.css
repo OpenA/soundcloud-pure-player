@@ -67,8 +67,7 @@
 	box-shadow: 1px 1px 4px rgba(0,0,0,.2);
 }
 
-.green .sc-controls a,
-.green .sc-controls a:hover {
+.green .sc-controls > * {
 	color: transparent;
 }
 
@@ -122,13 +121,11 @@
 	opacity: .9;
 }
 
-.green .sc-info h3 a,
-.green .sc-info h4 a {
+.green .sc-info a {
 	color: #b1e8cc;
 }
 
-.green .sc-info h3 a:hover,
-.green .sc-info h4 a:hover {
+.green .sc-info a:hover {
 	color: #e1f7ee;
 }
 
