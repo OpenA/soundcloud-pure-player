@@ -134,7 +134,10 @@ function SoundCloudAPI() {
 		'Global': false,
 		'Volume': 0.8,
 		'Tracks': {},
-		'Object': {}
+		'Object': {},
+		get 'Progress'() {
+			return 0;
+		}
 	}
 	
 	var _handler = 'ontouchstart' in window ? {
@@ -204,7 +207,7 @@ function SoundCloudAPI() {
 			this.PlayerNode['_buffer_'].style['width'] = buf +'%';
 		},
 		get 'Track Buffered' () {
-			return this.PlayerNode['_buffer_'].style['width'];
+			return this.PlayerNode['_buffer_'].style['width'] === '100%';
 		},
 		
 		invokeEvent: function(name) {
@@ -382,7 +385,7 @@ function SoundCloudAPI() {
 		_Current_.invokeEvent('timeupdate');
 	}
 	function onBufferLoad(e) {
-		if (_Current_['Track Buffered'] !== '100%') {
+		if (!_Current_['Track Buffered']) {
 			_Current_['Track Buffered'] = this.bytesPercent;
 		}
 	}
@@ -455,18 +458,24 @@ function SoundCloudAPI() {
 			
 		if (this === _Current_.PlayerNode['_waveform_']) {
 			var maxs = _Current_.TrackLoaded.duration,
+				curT = _Current_['AudioDevice'].currentTime,
 				seek = x > 1 ? maxs : x < 0 ? 0 : Math.floor(maxs * x * 1000000) / 1000000;
 			_Current_['AudioDevice'].ontimeupdate = null;
 			_Current_['Track Progress'] = seek;
+			if (seek > curT || curT < seek) {
+				_Current_.invokeEvent('seeking');
+			}
 			barMove = function(eM) {
 				maxs = _Current_.TrackLoaded.duration;
 				x = (_handler.getCoords(eM).x - rect.left) / rect.width;
 				seek = x > 1 ? maxs : x < 0 ? 0 : Math.floor(maxs * x * 1000000) / 1000000;
 				_Current_['Track Progress'] = seek;
+				_Current_.invokeEvent('seeking');
 			}
 			barEnd = function(eE) {
 				_Current_['AudioDevice'].ontimeupdate = onTimeUpdate;
 				_Current_['AudioDevice'].currentTime  = seek;
+				_Current_.invokeEvent('seeked');
 				window.removeEventListener(_handler.move, barMove, false);
 				window.removeEventListener(eE.type, barEnd, false);
 			}
@@ -558,6 +567,7 @@ function SoundCloudAPI() {
 			audio['ontimeupdate'] = onTimeUpdate;
 			audio['onerror'] = function(e) {
 				clearInterval(_BufferLoad);
+				_Current_.invokeEvent('error');
 			};
 			audio['onloadedmetadata'] = function(e) {
 				clearInterval(_BufferLoad);
@@ -630,11 +640,7 @@ function SoundCloudAPI() {
 				SC['Object'][hash] = { Volume: SC.Volume, Progress: 0 }
 				div.addEventListener('click', onClickHandler, false);
 			} else {
-				SC['Object'][hash] = {
-					get Volume() { return SC.Volume; },
-					set Volume(v) { SC.Volume = v; },
-					get Progress() { return 0; }
-				}
+				SC['Object'][hash] = SC;
 			}
 		}
 		return catchKeyElements('player', div);
