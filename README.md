@@ -43,12 +43,22 @@ links.forEach(function(lnk) {
 });
 ```
 
+Settings:
+```javascript
+var SC = {
+   'API': new SoundCloudAPI,
+   'Global': false,   // {true: all players share common global params (volume), false: each player uses his own params (volume, timeline) }
+   'Volume': 0.8,     // default volume slider position (0.8 = 80%; 0.425 = 42.5%; 1 = 100%; 0.07 = 7%; etc.)
+  /* ... */
+}
+```
+
 Event listeners:
 ```javascript
 var link = document.querySelector('a[href^="https://soundcloud.com/"]'),
   player = SCPurePlayer.create(link); //-> return custom player element
   
-  // possible media event type: ['play', 'pause', 'ended', 'timeupdate', 'volumechange']
+  // possible media event type: ['play', 'pause', 'ended', 'timeupdate', 'volumechange', 'seeking', 'seeked', 'error']
   player.addEventListener('play', function(event) {
     /*
       the event argument[0] is a CustomEvent object https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent
