@@ -163,9 +163,9 @@ function SoundCloudAPI() {
 				this.iframe = document.createElement('iframe');
 				this.iframe.width = this.iframe.height = 1;
 				this.iframe.setAttribute('style', 'position: absolute; left: -9000px');
-				document.body.appendChild(this.iframe).frameBorder = 0;
+				this.iframe.frameBorder = 0;
 			}
-			this.iframe.src = uri;
+			document.body.appendChild(this.iframe).src = uri;
 		}
 	}	
 	
