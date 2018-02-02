@@ -670,7 +670,7 @@ function SoundCloudAPI() {
 	
 	function updateTrackInfo(node, track) {
 		var artwork = track.artwork_url || track.user.avatar_url;
-		if (artwork && artwork.indexOf('avatars-000044695144-c5ssgx-large.jpg') < 0){
+		if (artwork && !/\/(?:default_avatar_|avatars-000044695144-c5ssgx-)/.test(artwork)) {
 			var img = node['_artwork_'].firstElementChild || document.createElement('img');
 			if (node['_artwork_'].clientWidth > 100) {
 				var s = findBestMatch([200, 250, 300, 500], node['_artwork_'].clientWidth);
