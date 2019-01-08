@@ -249,7 +249,7 @@ function SoundCloudAPI() {
 		
 		var anchor = document.createElement('a');
 	
-		this.download = function(button) {
+		(_fileDownload = function(button) {
 		
 			var uri   = button.href +'?consumer_key='+ SC['API'].apiKey,
 				track = SC['Tracks'][uri.match(/\/(-?\d+)\//)[1]];
@@ -287,8 +287,7 @@ function SoundCloudAPI() {
 				anchor.download = track.blob_name || '';
 				document.body.appendChild(anchor).click();
 			}
-		}
-		this.download(arguments[0]);
+		})(arguments[0]);
 		
 	} : function(a) {
 		window.open(a.href +'?consumer_key='+ SC['API'].apiKey, '_blank', 'width=400,height=200');
