@@ -245,39 +245,54 @@ function SoundCloudAPI() {
 		}
 	}
 	
-	var _fileDownload = 'download' in HTMLAnchorElement.prototype ? function(anchor) {
+	var _fileDownload = 'download' in HTMLAnchorElement.prototype ? function() {
 		
-		var uri = anchor.href;
+		var anchor = document.createElement('a');
+	
+		this.download = function(button) {
 		
-		if (/\/stream\?/.test(uri)) {
+			var uri   = button.href +'?consumer_key='+ SC['API'].apiKey,
+				track = SC['Tracks'][uri.match(/\/(-?\d+)\//)[1]];
 			
-			anchor.disabled    = true;
-			anchor.textContent = '0%';
-			
-			var wReq = new XMLHttpRequest;
-				wReq.responseType = 'blob';
-				wReq.onprogress = function(e) {
-					var percent = Math.round(e.loaded / e.total * 100),
-						progBar = percent +'% ';
-					for (; percent > 10; percent -= 10)
-						progBar += '»';
-					anchor.textContent = progBar;
-				};
-				wReq.onload = function() {
-					anchor.href        = window.URL.createObjectURL(wReq.response);
-					anchor.download   += '.'+ wReq.response.type.replace('audio/', '').replace('mpeg', 'mp3');
-					anchor.textContent = '» Download «';
-					anchor.disabled    = false;
-					anchor.className   = 'download';
-					anchor.click();
-				};
-				wReq.open('GET', uri, true);
-				wReq.send(null);
-		} else {
-			anchor.className = 'download';
-			anchor.click();
+			if (!track.downloadable) {
+				
+				button.textContent = '0%';
+				
+				for (var i = 0, sd = document.querySelectorAll('.sc-download'); i < sd.length; i++) {
+					sd[i].className = 'sc-disabled';
+				}
+				
+				var wReq = new XMLHttpRequest;
+					wReq.responseType = 'blob';
+					wReq.onprogress = function(e) {
+						var percent = Math.round(e.loaded / e.total * 100),
+							progBar = percent +'% ';
+						for (; percent > 10; percent -= 10)
+							progBar += '»';
+						button.textContent = progBar;
+					};
+					wReq.onload = function() {
+						track.blob_uri  = (anchor.href     = window.URL.createObjectURL(wReq.response));
+						track.blob_name = (anchor.download = track.title +'.'+ wReq.response.type.replace('audio/', '').replace('mpeg', 'mp3'));
+						track.downloadable = !document.body.appendChild(anchor).click();
+						button.textContent = '» Download «';
+						while (i--) {
+							sd[i].className = 'sc-download';
+						}
+					};
+					wReq.open('GET', uri, true);
+					wReq.send(null);
+			} else {
+				anchor.href     = track.blob_uri  || uri;
+				anchor.download = track.blob_name || '';
+				document.body.appendChild(anchor).click();
+			}
 		}
-	} : function(a) { window.open(a.href, '_blank', 'width=400,height=200') };
+		this.download(arguments[0]);
+		
+	} : function(a) {
+		window.open(a.href +'?consumer_key='+ SC['API'].apiKey, '_blank', 'width=400,height=200');
+	};
 	
 	if (SC['Global']) {
 		window.addEventListener('click', onClickHandler, false);
@@ -299,8 +314,8 @@ function SoundCloudAPI() {
 	function _scCreateGroup(links) {
 		var $hash = genGroupId(),
 			inact = true,
-			$node = createPlayerDOM($hash, links.length),
-			ibx   = links.length;
+			ibx   = links.length,
+			$node = createPlayerDOM(ibx, $hash);
 		
 		Array.prototype.slice.call(links, 0).forEach(function(link, it) {
 			
@@ -349,7 +364,7 @@ function SoundCloudAPI() {
 	
 	function _scCreate(link) {
 		var $hash = genGroupId(),
-			$node = createPlayerDOM($hash);
+			$node = createPlayerDOM(-1, $hash);
 			
 		SC['API'].getTracks(link.href, function(tracks){
 			for (var j = 0; j < tracks.length; j++) {
@@ -372,13 +387,7 @@ function SoundCloudAPI() {
 	
 	function onDOMReady(e) {
 		Array.prototype.slice.call(document.getElementsByClassName('sc-player'), 0).forEach(function(scp) {
-			var node, links;
-			if (scp.href) {
-				node = _scCreate(scp);
-			} else if ((links = scp.querySelectorAll('a[href*="soundcloud.com/"]')).length > 0) {
-				node = _scCreateGroup(links);
-			} else
-				node = createPlayerDOM(null);
+			var node = scp.href ? _scCreate(scp) : _scCreateGroup(scp.querySelectorAll('a[href*="soundcloud.com/"]'));
 			scp.parentNode.replaceChild(node, scp);
 		});
 		if (_Current_['AudioDevice'].tagName === 'OBJECT') {
@@ -452,6 +461,7 @@ function SoundCloudAPI() {
 					_Current_.connect($player, null, SC['Object'][$player.id.slice($player.id.indexOf('_') + 1)]);
 				case 'pause':
 					_Current_.AudioDevice[$sc[1]]();
+				case 'disabled':
 			}
 		}
 	}
@@ -636,7 +646,7 @@ function SoundCloudAPI() {
 			li += '<span id="ft_'+h+'_'+i+'"></span>';
 		return li;
 	}
-	function createPlayerDOM(hash, len) {
+	function createPlayerDOM(len, hash) {
 		var div = document.createElement('div');
 			div.className = 'sc-player loading';
 			div.innerHTML = '<ol class="sc-artwork-list"></ol>\n'+
@@ -661,7 +671,7 @@ function SoundCloudAPI() {
 				'		<div class="sc-waveform-container"></div>\n'+
 				'	</div>\n'+
 				'</div>';
-		if (hash) {
+		if (hash && len) {
 			div.id = 'sc-obj_'+ hash;
 			if (!SC['Global']) {
 				SC['Object'][hash] = { Volume: SC.Volume, Progress: 0 }
@@ -707,8 +717,7 @@ function SoundCloudAPI() {
 		node['_info_'].children[0].innerHTML = '<a href="'+ track.permalink_url +'">'+ track.title +'</a>';
 		node['_info_'].children[1].innerHTML = 'by <a href="'+ track.user.permalink_url +'">'+ track.user.username +'</a>';
 		node['_info_'].children[2].innerHTML = (track.description || 'no Description');
-		node['_info_'].children[3].download  = track.title;
-		node['_info_'].children[3].href      = (track.downloadable ? track.download_url : track.stream_url) +'?consumer_key='+ SC['API'].apiKey;
+		node['_info_'].children[3].href      = (track.downloadable ? track.download_url : track.stream_url);
 		// update the track duration in the progress bar
 		node['_duration_'].textContent = timeCalc(track.duration);
 		node['_position_'].textContent = '00.00';
