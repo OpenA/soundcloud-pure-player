@@ -4,25 +4,33 @@
 		<meta charset="utf-8">
 		<title>SC player example: Standard Skin</title>
 		<link rel="stylesheet" href="styles/sc-player-standard.css" type="text/css">
-		<link rel="stylesheet" href="styles/sc-player-horizontal.css" type="text/css">
-		<link rel="stylesheet" href="styles/sc-player-vertical.css" type="text/css">
-		<link rel="stylesheet" href="styles/sc-player-super.css" type="text/css">
-		<link rel="stylesheet" href="styles/sc-player-green.css" type="text/css">
-		<link rel="stylesheet" href="styles/sc-player-blue.css" type="text/css">
-		<link rel="stylesheet" href="styles/sc-player-orange.css" type="text/css">
+		<link rel="stylesheet" type="text/css" href="../css/sc-player-standard/structure-horizontal.css">
+		<link rel="stylesheet" type="text/css" href="../css/sc-player-standard/structure-vertical.css">
+		<link rel="stylesheet" type="text/css" href="../css/sc-player-standard/structure-super.css">
+		<link rel="stylesheet" type="text/css" href="../css/sc-player-standard/colors-green.css">
+		<link rel="stylesheet" type="text/css" href="../css/sc-player-standard/colors-blue.css">
+		<link rel="stylesheet" type="text/css" href="../css/sc-player-standard/colors-orange.css">
 		<script type="text/javascript" src="../js/sc-player.js"></script>
 		<script type="text/javascript">
-			window.onclick = function(e) {
-				if (e.target.id && e.target.id.slice(0, 5) === 'style' && e.target.className.indexOf('selected') === -1) {
-					var name       = e.target.id.split('_'), sel = ' selected',
-						classList  = e.target.className.split(' '),
-						prevSelect = e.target.parentNode.querySelector('.selected');
-					e.target.parentNode.nextElementSibling.className = name[1] +' '+ name[2];
-					
-					if (prevSelect) {
-						prevSelect.className = prevSelect.className.substring(0, prevSelect.className.length - sel.length);
-					}
-					e.target.className += sel;
+			window.onload = e => {
+				const sc = document.querySelectorAll('.sc-player-horizontal,.sc-player-vertical,.sc-player-super');
+				const hp = SCPurePlayer.create     (sc[0]);
+				const vp = SCPurePlayer.create     (sc[1]);
+				const sp = SCPurePlayer.createGroup(sc[2].children);
+
+				hp.className = sc[0].className; sc[0].replaceWith(hp);
+				vp.className = sc[1].className; sc[1].replaceWith(vp);
+				sp.className = sc[2].className; sc[2].replaceWith(sp);
+			}
+			window.onclick = e => {
+				const { parentNode, classList } = e.target;
+				if (classList[0].startsWith('option') && classList[1] != 'selected') {
+					const player = parentNode.nextElementSibling.classList;
+					for (const { classList: cl } of parentNode.children)
+						cl.remove('selected');
+					player.remove('sc-C-orange', 'sc-C-blue', 'sc-C-green');
+					player.add(classList[0].replace('option', 'sc-C'));
+					classList.add('selected');
 				}
 			}
 		</script>
@@ -30,20 +38,30 @@
 	<body>
 		<a href="sc-player-modern.html">Modern Player</a>
 		<h1>Standart Skin</h1>
-		<div class="post">
-			<h2>horizontal <span id="style_horizontal_green" class="option-green selected">green</span> <span id="style_horizontal_blue" class="option-blue">blue</span> <span id="style_horizontal_orange" class="option-orange">orange</span></h2>
-			<div class="horizontal green">
-				<a href="https://soundcloud.com/tunguska-ems" class="sc-player">Tunguska Electronic Music Society</a>
+		<div class="fx-cont">
+			<div class="fx-horiz">
+				<h2>horizontal
+					<span class="option-green selected"></span>
+					<span class="option-blue"></span>
+					<span class="option-orange"></span>
+				</h2>
+				<a href="https://soundcloud.com/tunguska-ems" class="sc-player-horizontal sc-C-green">Tunguska Electronic Music Society</a>
 			</div>
-			<h2>vertical <span id="style_vertical_green" class="option-green">green</span> <span id="style_vertical_blue" class="option-blue selected">blue</span> <span id="style_vertical_orange" class="option-orange">orange</span></h2>
-			<div class="vertical blue">
-				<a href="https://soundcloud.com/hitboxx" class="sc-player">The Nth °</a>
+			<div class="fx-vert">
+				<h2>vertical
+					<span class="option-green"></span>
+					<span class="option-blue selected"></span>
+					<span class="option-orange"></span>
+				</h2>
+				<a href="https://soundcloud.com/hitboxx" class="sc-player-vertical sc-C-blue">The Nth °</a>
 			</div>
-		</div>
-		<div class="sidebar">
-			<h2>super <span id="style_super_green" class="option-green">green</span> <span id="style_super_blue" class="option-blue">blue</span> <span id="style_super_orange" class="option-orange selected">orange</span></h2>
-			<div class="super orange">
-				<div class="sc-player">
+			<div class="fx-super">
+				<h2>super
+					<span class="option-green"></span>
+					<span class="option-blue"></span>
+					<span class="option-orange selected"></span>
+				</h2>
+				<div class="sc-player-super sc-C-orange">
 					<a href="https://soundcloud.com/aethernaut/final-frontier">Final Frontier</a>
 					<a href="https://soundcloud.com/chibinoize/technicolor">Technicolor</a>
 					<a href="https://soundcloud.com/anzomusic/castlevania-bloody-tears-anzo">Castlevania - Bloody Tears (Anzo Cover)</a>

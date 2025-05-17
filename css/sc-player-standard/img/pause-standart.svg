@@ -1,29 +1,6 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg width="136px" height="173px" viewBox="0 0 136 173" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
-	<defs>
-		<filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id="filter-1">
-			<feOffset dx="15" dy="0" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
-			<feGaussianBlur stdDeviation="0" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
-			<feColorMatrix values="0 0 0 0 1   0 0 0 0 1   0 0 0 0 1  0 0 0 0.35 0" in="shadowBlurOuter1" type="matrix" result="shadowMatrixOuter1"></feColorMatrix>
-			<feMerge>
-				<feMergeNode in="shadowMatrixOuter1"></feMergeNode>
-				<feMergeNode in="SourceGraphic"></feMergeNode>
-			</feMerge>
-		</filter>
-		<filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id="filter-2">
-			<feOffset dx="-15" dy="0" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
-			<feGaussianBlur stdDeviation="0" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
-			<feColorMatrix values="0 0 0 0 1   0 0 0 0 1   0 0 0 0 1  0 0 0 0.35 0" in="shadowBlurOuter1" type="matrix" result="shadowMatrixOuter1"></feColorMatrix>
-			<feMerge>
-				<feMergeNode in="shadowMatrixOuter1"></feMergeNode>
-				<feMergeNode in="SourceGraphic"></feMergeNode>
-			</feMerge>
-		</filter>
-	</defs>
-	<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-		<g id="Rectangle-1-+-Rectangle-2" sketch:type="MSLayerGroup" fill="#FFFFFF">
-			<rect id="Rectangle-1" filter="url(#filter-1)" sketch:type="MSShapeGroup" x="0" y="0" width="40" height="173"></rect>
-			<rect id="Rectangle-2" filter="url(#filter-2)" sketch:type="MSShapeGroup" x="96" y="0" width="40" height="173"></rect>
-		</g>
+<svg viewBox="0 0 136 173" xmlns="http://www.w3.org/2000/svg">
+	<g id="SC_Pause" fill="white">
+		<path fill-opacity="0.3" d="m 81,0 v 173 h 40 V 0 Z M 15,0 V 173 H 55 V 0 Z"/>
+		<path d="M 0 0 L 0 173 L 40 173 L 40 0 L 0 0 z M 96 0 L 96 173 L 136 173 L 136 0 L 96 0 z"/>
 	</g>
 </svg>

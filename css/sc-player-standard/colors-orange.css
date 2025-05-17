@@ -1,6 +1,6 @@
 /* ----------< Standart color orange >---------------- */
 
-.sc-player {
+.sc-C-orange {
 	font: .7em Arial, sans-serif;
 	background-color: #eee;
 	background:      linear-gradient( top, black, #ccc 0%, #fff 70%);
@@ -12,13 +12,13 @@
 	box-shadow: 1px 1px 3px rgba(0,0,0,.2);
 }
 
-.sc-player a {
+.sc-C-orange a {
 	text-decoration: none;
 }
 
 /* Artworks */
 
-.sc-artwork-list {
+.sc-C-orange .sc-artwork-list {
 	background-color: #eee;
 	background:      linear-gradient( left bottom, #eee 20px, #333 350px );
 	background:   -o-linear-gradient( left bottom, #eee 20px, #333 350px );
@@ -29,23 +29,23 @@
 
 /* Scrubber */
 
-.sc-scrubber {
+.sc-C-orange .sc-scrubber {
 	background-color: #e5e5e5;
 	border-radius: 8px;
 	box-shadow: 1px 1px 3px rgba(0,0,0,.2);
 }
 
-.sc-time-span {
+.sc-C-orange .sc-time-span {
 	background-color: #ddd;
 }
 
-.sc-buffer,
-.sc-played {
+.sc-C-orange .sc-buffer,
+.sc-C-orange .sc-played {
 	background-color: #adadad;
 	position: absolute;
 }
 
-.sc-played {
+.sc-C-orange .sc-played {
 	background-color: #e74c14;
 	background:      linear-gradient( top, black, #e74c14 0, #f6a400 90% );
 	background:   -o-linear-gradient( top, black, #e74c14 0, #f6a400 90% );
@@ -53,14 +53,14 @@
 	background: -webkit-gradient(linear, left top, left 90%, from(black), color-stop(0%, #e74c14), to(#f6a400));
 }
 
-.sc-waveform-container {
+.sc-C-orange .sc-waveform-container {
 	position: absolute;
 	width: 100%;
 }
 
 /* Controls */
 
-.sc-controls {
+.sc-C-orange .sc-controls {
 	border-radius: 100%;
 	border: 2px solid white;
 	background-color: #f6a400;
@@ -71,14 +71,14 @@
 	box-shadow: 1px 1px 3px rgba(0,0,0,.2);
 }
 
-.sc-controls:hover {
+.sc-C-orange .sc-controls:hover {
 	background:      linear-gradient( 225deg, #e74c14, #f6a400 );
 	background:   -o-linear-gradient( 225deg, #e74c14, #f6a400 );
 	background: -moz-linear-gradient( 225deg, #e74c14, #f6a400 );
 	background: -webkit-gradient(linear, top right, left bottom, from(#e74c14), to(#f6a400));
 }
 
-.sc-controls > * {
+.sc-C-orange .sc-controls > * {
 	color: transparent;
 }
 
@@ -91,90 +91,90 @@
 
 /* Track list */
 
-.sc-trackslist li.active {
+.sc-C-orange .sc-trackslist li.active {
 	color: #fff;
 	background: #e74c14;
 }
 
-.sc-track-duration {
+.sc-C-orange .sc-track-duration {
 	text-align: right;
 	padding: 0 5px;
 	margin-left: 5px;
 }
 
-.sc-trackslist li.active,
-.sc-trackslist li:hover {
+.sc-C-orange .sc-trackslist li.active,
+.sc-C-orange .sc-trackslist li:hover {
 	border-radius: 4px;
 	box-shadow: 1px 1px 3px rgba(0,0,0,.2);
 }
 
-.sc-trackslist li:hover {
+.sc-C-orange .sc-trackslist li:hover {
 	background-color: #f6a400;
 }
 
-.sc-trackslist li.active a {
+.sc-C-orange .sc-trackslist li.active a {
 	color: #fff;
 }
 
-.sc-trackslist li a {
+.sc-C-orange .sc-trackslist li a {
 	color: #333;
 }
 
 /* Track info */
 
-.sc-info.active {
+.sc-C-orange .sc-info.active {
 	background: #fff;
 	opacity: .9;
 }
 
-.sc-info a {
+.sc-C-orange .sc-info a {
 	color: #e74c14;
 }
 
-.sc-info p a {
+.sc-C-orange .sc-info p a {
 	text-decoration: underline;
 }
 
-.sc-info a:hover {
+.sc-C-orange .sc-info a:hover {
 	color: #f6a400;
 }
 
-.sc-info-toggle,
-.sc-time-indicators {
+.sc-C-orange .sc-info-toggle,
+.sc-C-orange .sc-time-indicators {
 	background: #f6a400;
 	color: #ab3104;
 	border-radius: 4px;
 	box-shadow: 1px 1px 3px rgba(0,0,0,.2);
 	padding: 4px;
 }
-.sc-info-close,
-.sc-info-close:hover {
+.sc-C-orange .sc-info-close,
+.sc-C-orange .sc-info-close:hover {
 	padding: 2px 4px;
 	font-weight: bold;
 	border-radius: 4px;
 	box-shadow: 1px 1px 3px rgba(0,0,0,.2);
 }
 
-.sc-info-close:hover {
+.sc-C-orange .sc-info-close:hover {
 	background: #f6a400;
 	color: #ab3104;
 }
 
-.sc-info-toggle:hover,
-.sc-info-close {
+.sc-C-orange .sc-info-toggle:hover,
+.sc-C-orange .sc-info-close {
 	background: #fff;
 	color: #e74c14;
 }
 
 /* Volume control */
 
-.sc-volume-slider {
+.sc-C-orange .sc-volume-slider {
 	background-color: #e5e5e5;
 	border-radius: 2px;
 	box-shadow: 1px 1px 3px rgba(0,0,0,.2);
 }
 
-.sc-volume-slider .sc-volume-status {
+.sc-C-orange .sc-volume-slider .sc-volume-status {
 	background-color: #666;
 	border-right: 1px solid #f6a400;
 }
