@@ -1,0 +1,110 @@
+/* ----------< SC-Player Standart Skeletion >---------------- */
+
+@import url('../sc-player-base.css');
+
+/* Initial player style */
+.sc-player-standart {
+	display: inline-flex;
+	margin: 5px;
+	font: normal .8em sans-serif;
+}
+
+/* Content blocks rectangles */
+.sc-player-standart .sc-box-controls,
+.sc-player-standart .sc-artwork,
+.sc-player-standart .sc-tracklist {
+	width: 270px;
+	height: 270px;
+}
+
+/* Playlist formations */
+.sc-P-horizontal { flex-direction: row; }
+.sc-P-vertical   { flex-direction: column; }
+
+/* Volume bar */
+.sc-player-standart .sc-volume {
+	position: absolute;
+	padding: 1.5px 4.5px 1.5px 1.5px;
+	border-radius: 2px;
+	left: 10px; width: 100px;
+	top: 190px; height: 10px;
+}
+.sc-player-standart .sc-bar-volume {
+	border-right: 3px solid;
+}
+
+/* Play Controls */
+.sc-player-standart .sc-play-toggle {
+	position: absolute;
+	top: 40%; left: 40%;
+	border-radius: 100%;
+	border: 2px solid white;
+}
+.sc-player-standart .sc-play-toggle:before {
+	content: '';
+	padding: 25px;
+	display: block;
+	background: url('img/play-standart.svg') no-repeat center / 30%;
+}
+.sc-player-standart .S-played:not(.S-paused) > .sc-play-toggle:before {
+	background-image: url('img/pause-standart.svg');
+}
+.sc-player-standart .sc-waveform:after {
+	content: '';
+	background: url('img/wave-standart.svg') no-repeat center / 100%;
+}
+
+/* Time Methers */
+.sc-player-standart .sc-time-indicators {
+	position: absolute;
+	border-radius: 4px;
+	line-height: 16px;
+	font-size: 1.1em;
+	padding: 4px;
+	right: 10px; bottom: 10px;
+}
+.sc-player-standart .S-played > .sc-time-indicators {
+	bottom: 65px;
+}
+.sc-player-standart .sc-time-scale {
+	position: absolute;
+	padding: 5px;
+	border-radius: 8px;
+	left: 10px; width: 240px;
+	bottom: 10px; height: 40px;
+}
+
+/* Info Button */
+.sc-player-standart .sc-info-toggle {
+	position: absolute;
+	border-radius: 4px;
+	padding: 1px 4px;
+	font: bold 1.2em serif;
+	left: 10px; top: 10px;
+}
+.sc-player-standart .sc-info-toggle:before {
+	content: 'i';
+	padding: 0 4px;
+}
+.sc-player-standart .S-detail > .sc-info-toggle:before {
+	content: '⨯';
+	padding: 0 1px;
+}
+
+/* Track-list item */
+.sc-player-standart .sc-track {
+	margin: 5px;
+	padding: 3px 30px 3px 5px;
+	border-radius: 4px;
+}
+.sc-player-standart .sc-track:after {
+	position: absolute;
+	right: 5px;
+}
+
+/* Add track btn and drop-box overlay */
+.sc-player-standart .sc-add-track:before {
+	content: '+';
+	padding: 0 4px;
+	font: bold 1.2em serif;
+}

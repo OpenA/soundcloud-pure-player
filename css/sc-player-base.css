@@ -1,0 +1,80 @@
+/* ----------< SC-Player Basic >---------------- */
+
+sc-player, sc-list {
+	display: inline-block;
+	position: relative;
+}
+
+sc-item {
+	display: list-item;
+	position: relative;
+}
+
+sc-list {
+	list-style: none inside;
+}
+
+sc-player .sc-tracklist {
+	list-style-type: decimal-leading-zero;
+	overflow: auto;
+}
+
+sc-player .sc-info-toggle,
+sc-player .sc-play-toggle,
+sc-player .sc-track {
+	cursor: pointer;
+}
+
+sc-player .sc-volume,
+sc-player .sc-time-scale,
+sc-player .sc-info-overlay {
+	visibility: hidden;
+}
+
+sc-player .S-played > .sc-volume,
+sc-player .S-played > .sc-time-scale,
+sc-player .S-detail > .sc-info-overlay {
+	visibility: visible;
+}
+
+sc-player .sc-waveform:after,
+sc-player .sc-info-overlay {
+	position: absolute;
+	left: 0; right: 0;
+	top: 0; bottom: 0;
+}
+
+sc-player .sc-bar-buffer { bottom:0; }
+sc-player .sc-bar-buffer,
+sc-player .sc-box-controls {
+	position: absolute;
+	left: 0; top: 0;
+}
+sc-player .sc-add-track {
+	position: absolute;
+	right: 0; bottom: 0;
+}
+
+sc-player .sc-track {
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+}
+sc-player .sc-track:after {
+	content: attr(data-duration);
+}
+sc-player .sc-time-indicators:before {
+	content: attr(data-pos) ' / ' attr(data-duration);
+	white-space: nowrap;
+}
+
+sc-player .sc-waveform,
+sc-player .sc-bar-plying,
+sc-player .sc-bar-volume {
+	position: relative;
+	height: 100%;
+}
+
+sc-player .S-hidden {
+	display: none;
+}

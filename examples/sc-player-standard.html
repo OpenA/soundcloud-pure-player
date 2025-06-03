@@ -4,33 +4,35 @@
 		<meta charset="utf-8">
 		<title>SC player example: Standard Skin</title>
 		<link rel="stylesheet" href="styles/sc-player-standard.css" type="text/css">
-		<link rel="stylesheet" type="text/css" href="../css/sc-player-standard/structure-horizontal.css">
-		<link rel="stylesheet" type="text/css" href="../css/sc-player-standard/structure-vertical.css">
-		<link rel="stylesheet" type="text/css" href="../css/sc-player-standard/structure-super.css">
-		<link rel="stylesheet" type="text/css" href="../css/sc-player-standard/colors-green.css">
-		<link rel="stylesheet" type="text/css" href="../css/sc-player-standard/colors-blue.css">
-		<link rel="stylesheet" type="text/css" href="../css/sc-player-standard/colors-orange.css">
+		<link rel="stylesheet" type="text/css" href="../css/sc-player-standard/standart-skel.css">
+		<link rel="stylesheet" type="text/css" href="../css/sc-player-standard/standart-colors.css">
 		<script type="text/javascript" src="../js/sc-player.js"></script>
 		<script type="text/javascript">
 			window.onload = e => {
-				const sc = document.querySelectorAll('.sc-player-horizontal,.sc-player-vertical,.sc-player-super');
-				const hp = SCPurePlayer.create     (sc[0]);
-				const vp = SCPurePlayer.create     (sc[1]);
-				const sp = SCPurePlayer.createGroup(sc[2].children);
+				const fx = document.body.querySelectorAll('.fx-vert, .fx-super');
+				const sp = new SCPlayer({ variant: 'vertical', colors: 'blue' });
 
-				hp.className = sc[0].className; sc[0].replaceWith(hp);
-				vp.className = sc[1].className; sc[1].replaceWith(vp);
-				sp.className = sc[2].className; sc[2].replaceWith(sp);
+				fx[0].children[0].onclick = // +>
+				fx[1].children[0].onclick = _onClkAct;
+				fx[0].append(sp);
 			}
-			window.onclick = e => {
-				const { parentNode, classList } = e.target;
-				if (classList[0].startsWith('option') && classList[1] != 'selected') {
-					const player = parentNode.nextElementSibling.classList;
-					for (const { classList: cl } of parentNode.children)
+			const _onClkAct = ({ target }) => {
+				const parent = target.parentNode;
+				let [opt='',sel=''] = target.classList;
+				if (opt.startsWith('col') && sel != 'selected') {
+					const player = parent.nextElementSibling;
+					opt = opt.substring(4);
+					for (const { classList: cl } of parent.children)
 						cl.remove('selected');
-					player.remove('sc-C-orange', 'sc-C-blue', 'sc-C-green');
-					player.add(classList[0].replace('option', 'sc-C'));
-					classList.add('selected');
+					player.classList.remove('sc-C-orange', 'sc-C-blue', 'sc-C-green');
+					player.classList.add(`sc-C-${opt}`);
+					target.classList.add('selected');
+				} else if (opt.startsWith('pos')) {
+					const player = parent.nextElementSibling;
+					sel = opt.substring(4),
+					opt = sel.startsWith('vert') ? 'horizontal' : 'vertical';
+					player.classList.replace(`sc-P-${sel}`, `sc-P-${opt}`);
+					target.classList.replace(`pos-${sel}` , `pos-${opt}`);
 				}
 			}
 		</script>
@@ -39,49 +41,23 @@
 		<a href="sc-player-modern.html">Modern Player</a>
 		<h1>Standart Skin</h1>
 		<div class="fx-cont">
-			<div class="fx-horiz">
-				<h2>horizontal
-					<span class="option-green selected"></span>
-					<span class="option-blue"></span>
-					<span class="option-orange"></span>
-				</h2>
-				<a href="https://soundcloud.com/tunguska-ems" class="sc-player-horizontal sc-C-green">Tunguska Electronic Music Society</a>
-			</div>
 			<div class="fx-vert">
-				<h2>vertical
-					<span class="option-green"></span>
-					<span class="option-blue selected"></span>
-					<span class="option-orange"></span>
+				<h2>
+					<span class="col-green"></span>
+					<span class="col-blue selected"></span>
+					<span class="col-orange"></span>
+					<span class="pos-vertical"></span>
 				</h2>
-				<a href="https://soundcloud.com/hitboxx" class="sc-player-vertical sc-C-blue">The Nth °</a>
 			</div>
 			<div class="fx-super">
 				<h2>super
-					<span class="option-green"></span>
-					<span class="option-blue"></span>
-					<span class="option-orange selected"></span>
+					<span class="col-green"></span>
+					<span class="col-blue"></span>
+					<span class="col-orange selected"></span>
 				</h2>
-				<div class="sc-player-super sc-C-orange">
-					<a href="https://soundcloud.com/aethernaut/final-frontier">Final Frontier</a>
-					<a href="https://soundcloud.com/chibinoize/technicolor">Technicolor</a>
-					<a href="https://soundcloud.com/anzomusic/castlevania-bloody-tears-anzo">Castlevania - Bloody Tears (Anzo Cover)</a>
-					<a href="https://soundcloud.com/fuskasker/fusk-asker-bully-original-mix">Fusk Asker - Bully (Original Mix)</a>
-					<a href="https://soundcloud.com/ensnare-1/there-is-always-love">There Is Always Love</a>
-					<a href="https://soundcloud.com/dubmood/dubmood-chiptune">Dubmood - Chiptune</a>
-					<a href="https://soundcloud.com/protoflight/post">Post</a>
-					<a href="https://soundcloud.com/fantomenk/fantomenk-a-tiny-spaceships">A Tiny Spaceship's Final Mission</a>
-					<a href="https://soundcloud.com/aethernaut/shine-get">Shine Get</a>
-					<a href="https://soundcloud.com/tastyselection/demon-groove-saturate-teaser">Demon Groove - Saturate</a>
-					<a href="https://soundcloud.com/tastyselection/demon-groove-lenningrad-2034">Demon Groove - Lenningrad 2034</a>
-					<a href="https://soundcloud.com/bossfightswe/dr-wilys-castle-stage-1">Dr. Wily's Castle: Stage 1</a>
-					<a href="https://soundcloud.com/ensnare-1/yes-we-have-made-it-to-the">Yes, We Have Made it to the Dungeon Of Tropes</a>
-					<a href="https://soundcloud.com/shawndaley/in-brightest-day">In Brightest Day</a>
-					<a href="https://soundcloud.com/shawndaley/a-hero-stands-tall">A Hero Stands Tall</a>
-					<a href="https://soundcloud.com/myuu/lavender-town-pokemon-cover">Lavender Town (Pokémon Cover)</a>
-					<a href="https://soundcloud.com/sirrus-3/the-xx-intro-dream-city-remix">XX Intro Dream</a>
-				</div>
+				<sc-player class="sc-player-super sc-C-orange"></sc-player>
 			</div>
 		</div>
-		<div class="footer">2017</div>
+		<div class="footer">2025</div>
 	</body>
 </html>

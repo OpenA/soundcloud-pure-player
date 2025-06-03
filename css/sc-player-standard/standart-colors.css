@@ -1,0 +1,142 @@
+/* ----------< SC-Player Standart Colors >---------------- */
+
+.sc-C-orange {
+	--play-col1: #e74c14; --btns-bg1: #f6a400;
+	--play-col2: #f6a400; --btns-bg2: white;
+	--track-bg1: #ffdeab; --cont-bg1: #e1e1e1;/*#f7c06c*/
+	--track-bg2: #fffaf0; --info-bg1: rgba(255,255,255,.75);
+
+	--btns-txt1: #961830; --text-col1: #703b15;
+	--btns-txt2: #ee7346; --fill-bar1: #703b15;
+	--track-num: #ab3104; --fill-bar2: #aaa;
+	--track-ttl: #444;
+
+	--shdw-dep1: rgba(0,0,0,.2);
+	--shdw-dep2: rgba(0,0,0,.2);
+
+	--trklist-bg: #e6e6e6 linear-gradient(#e6e6e6, #fefefe);
+	--artwork-bg: #e1e1e1 linear-gradient(45deg, #e1e1e1, #7e7e7e);
+}
+.sc-C-green {
+	--play-col1: #239a64; --btns-bg1: #22b573;
+	--play-col2: #8fdfbe; --btns-bg2: #333;
+	--track-bg1: #35956c; --cont-bg1: #e5e5e5;
+	--track-bg2: #5a7067; --info-bg1: rgba(76,76,76,.9);
+
+	--btns-txt1: inherit; --text-col1: white;
+	--btns-txt2: inherit; --fill-bar1: #666;
+	--track-ttl: inherit; --fill-bar2: #888;
+	--track-num: #d3f4e5;/* #b8e9d3 #5f9d83 */
+
+	--shdw-dep1: rgba(0,0,0,.2);
+	--shdw-dep2: rgba(56,56,56,.7);
+
+	--trklist-bg: #393939;
+	--artwork-bg: #474747 linear-gradient(76deg, #dedede, #393939);
+}
+.sc-C-blue {
+	--play-col1: #2c66db; --btns-bg1: white;
+	--play-col2: #84a6e7; --btns-bg2: #317fb7;
+	--track-bg1: #abe9ff; --cont-bg1: #ededed;/*#f7c06c*/
+	--track-bg2: #dcf6ff; --info-bg1: rgba(255,255,255,.75);
+
+	--btns-txt1: inherit; --text-col1: #081d47;
+	--btns-txt2: white; --fill-bar1: #5185ab;
+	--track-ttl: inherit; --fill-bar2: #c3c3c3;
+	--track-num: #76787b;
+
+	--shdw-dep1: rgba(0,0,0,.2);
+	--shdw-dep2: rgba(208,218,228,.2);
+
+	--trklist-bg: white;
+	--artwork-bg: #c4c7cc linear-gradient(45deg, #f0fcfc, #c4c7cc 90%);
+}
+
+.sc-player-standart {
+	color: var(--text-col1);
+}
+
+/* Artwork + Tracklist */
+.sc-player-standart .sc-artwork   { background: var(--artwork-bg); }
+.sc-player-standart .sc-tracklist { background: var(--trklist-bg); }
+
+/* Volume + Timescale */
+.sc-player-standart .sc-volume,
+.sc-player-standart .sc-time-scale {
+	background-color: var(--cont-bg1);
+}
+
+/* Bar Fill Colors */
+.sc-player-standart .sc-bar-volume {
+	background-color: var(--fill-bar1);
+	border-right-color: var(--fill-bar1);
+}
+.sc-player-standart .sc-bar-volume:hover,
+.sc-player-standart .S-hook > .sc-bar-volume {
+	border-right-color: var(--btns-bg1);
+}
+.sc-player-standart .sc-bar-buffer {
+	background-color: var(--fill-bar2);
+}
+.sc-player-standart .sc-bar-plying {
+	background-color: var(--play-col1);
+	background-image: linear-gradient(var(--play-col1), var(--play-col2) 80%);
+}
+
+/* Play Control Colors */
+.sc-player-standart .sc-play-toggle {
+	background-color: var(--play-col1);
+	background-image: linear-gradient(45deg, var(--play-col1), var(--play-col2));
+}
+.sc-player-standart .sc-play-toggle:hover {
+	background-color: var(--play-col2);
+	background-image: linear-gradient(var(--play-col1), var(--play-col2));
+}
+
+/* Info button + Timer digits */
+.sc-player-standart .sc-info-toggle,
+.sc-player-standart .sc-time-indicators {
+	background-color: var(--btns-bg1);
+	color: var(--btns-txt1);
+}
+.sc-player-standart .sc-info-toggle:hover {
+	background-color: var(--btns-bg2);
+	color: var(--btns-txt2);
+}
+
+/* Info Content Colors */
+.sc-player-standart .sc-info-overlay {
+	background-color: var(--info-bg1);
+}
+
+/* Shadow Boxes */
+.sc-player-standart .sc-time-indicators,
+.sc-player-standart .sc-info-toggle,
+.sc-player-standart .sc-play-toggle,
+.sc-player-standart .sc-time-scale,
+.sc-player-standart .sc-tracklist,
+.sc-player-standart .sc-artwork,
+.sc-player-standart .sc-volume {
+	box-shadow: 1px 1px 2px var(--shdw-dep1);
+}
+.sc-player-standart,
+.sc-player-standart .sc-box-controls {
+	box-shadow: 1px 1px 4px var(--shdw-dep2);
+}
+
+/* Track item colors */
+.sc-player-standart .sc-track.S-active {
+	box-shadow: 0 1px 1px var(--shdw-dep1);
+	background-color: var(--track-bg1);
+	transition: background-color .3s ease-in;
+}
+.sc-player-standart .sc-track:hover {
+	background-color: var(--track-bg2);
+}
+.sc-player-standart .sc-track {
+	color: var(--track-ttl);
+}
+.sc-player-standart .sc-track::after,
+.sc-player-standart .sc-track::marker {
+	color: var(--track-num);
+}
