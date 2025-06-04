@@ -24,13 +24,22 @@
 /* Volume bar */
 .sc-player-standart .sc-volume {
 	position: absolute;
-	padding: 1.5px 4.5px 1.5px 1.5px;
+	padding: 1.5px 3px 1.5px 12px;
 	border-radius: 2px;
 	left: 10px; width: 100px;
-	top: 190px; height: 10px;
+	top: 185px; height: 14px;
 }
-.sc-player-standart .sc-bar-volume {
-	border-right: 3px solid;
+.sc-player-standart .sc-volume:after {
+	content: '🕪';
+	position: absolute;
+	display: block;
+	left: 2px; top: 0; bottom: 0;
+	font: 1em serif;
+	line-height: 15px;
+}
+.sc-player-standart .sc-volume.S-hook:after {
+	content: '🕪 ' attr(data-percent) '%';
+	padding-right: 2px;
 }
 
 /* Play Controls */
@@ -51,7 +60,7 @@
 }
 .sc-player-standart .sc-waveform:after {
 	content: '';
-	background: url('img/wave-standart.svg') no-repeat center / 100%;
+	background: url('img/wave-standart.svg') center / 100%;
 }
 
 /* Time Methers */
@@ -70,7 +79,7 @@
 	position: absolute;
 	padding: 5px;
 	border-radius: 8px;
-	left: 10px; width: 240px;
+	left: 10px; right: 10px;
 	bottom: 10px; height: 40px;
 }
 
@@ -107,4 +116,55 @@
 	content: '+';
 	padding: 0 4px;
 	font: bold 1.2em serif;
+}
+
+/* Wide formation */
+.sc-player-standart.sc-P-wide {
+	display: flex;
+	flex-direction: column;
+}
+.sc-player-standart.sc-P-wide .sc-artwork {
+	width: 150px;
+	height: 150px;
+	z-index:1;
+}
+.sc-player-standart.sc-P-wide .sc-info-toggle,
+.sc-player-standart.sc-P-wide .sc-info-overlay {
+	z-index:1;
+}
+.sc-player-standart.sc-P-wide .sc-info-toggle {
+	right: 10px;
+	left: auto;
+}
+.sc-player-standart.sc-P-wide .sc-box-controls {
+	width: 100%;
+	height: 150px;
+}
+.sc-player-standart.sc-P-wide .sc-tracklist {
+	width: 100%;
+	min-height: 160px;
+	max-height: auto;
+}
+.sc-player-standart.sc-P-wide .sc-play-toggle {
+	top: 10px;
+	left: 160px;
+}
+.sc-player-standart.sc-P-wide .S-played > .sc-time-indicators {
+	bottom: 85px;
+}
+.sc-player-standart.sc-P-wide .sc-time-scale {
+	height: 55px;
+	left: 160px;
+}
+.sc-player-standart.sc-P-wide .sc-waveform:after {
+	background-size: 55%;
+}
+.sc-player-standart.sc-P-wide .sc-volume {
+	top: 10px; height: 20px;
+	left: auto; right: 42px;
+}
+.sc-player-standart.sc-P-wide .sc-volume:after {
+	font-weight: bold;
+	line-height: 20px;
+	font-size: 1.1em;
 }

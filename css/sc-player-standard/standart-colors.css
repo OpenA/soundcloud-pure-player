@@ -14,13 +14,14 @@
 	--shdw-dep1: rgba(0,0,0,.2);
 	--shdw-dep2: rgba(0,0,0,.2);
 
-	--trklist-bg: #e6e6e6 linear-gradient(#e6e6e6, #fefefe);
-	--artwork-bg: #e1e1e1 linear-gradient(45deg, #e1e1e1, #7e7e7e);
+	--plist-bg1: #e6e6e6 linear-gradient(#e6e6e6, #fefefe);
+	--awrk-col1: #e1e1e1; --awrk-bg1: #cecece;
+	--awrk-col2: #7e7e7e;
 }
 .sc-C-green {
 	--play-col1: #239a64; --btns-bg1: #22b573;
 	--play-col2: #8fdfbe; --btns-bg2: #333;
-	--track-bg1: #35956c; --cont-bg1: #e5e5e5;
+	--track-bg1: #35956c; --cont-bg1: #dadada;
 	--track-bg2: #5a7067; --info-bg1: rgba(76,76,76,.9);
 
 	--btns-txt1: inherit; --text-col1: white;
@@ -31,8 +32,9 @@
 	--shdw-dep1: rgba(0,0,0,.2);
 	--shdw-dep2: rgba(56,56,56,.7);
 
-	--trklist-bg: #393939;
-	--artwork-bg: #474747 linear-gradient(76deg, #dedede, #393939);
+	--plist-bg1: #4f554d;
+	--awrk-col1: #e2e8e0; --awrk-bg1: #a2a7a1;
+	--awrk-col2: #484c48;
 }
 .sc-C-blue {
 	--play-col1: #2c66db; --btns-bg1: white;
@@ -46,10 +48,11 @@
 	--track-num: #76787b;
 
 	--shdw-dep1: rgba(0,0,0,.2);
-	--shdw-dep2: rgba(208,218,228,.2);
+	--shdw-dep2: rgba(93,99,105,.2);
 
-	--trklist-bg: white;
-	--artwork-bg: #c4c7cc linear-gradient(45deg, #f0fcfc, #c4c7cc 90%);
+	--plist-bg1: white;
+	--awrk-col1: #f0fcfc; --awrk-bg1: #dce4e7;
+	--awrk-col2: #c4c7cc;
 }
 
 .sc-player-standart {
@@ -57,8 +60,16 @@
 }
 
 /* Artwork + Tracklist */
-.sc-player-standart .sc-artwork   { background: var(--artwork-bg); }
-.sc-player-standart .sc-tracklist { background: var(--trklist-bg); }
+.sc-player-standart .sc-artwork {
+	background-color: var(--awrk-bg1);
+	background-image: linear-gradient(45deg, var(--awrk-col1), var(--awrk-col2));
+}
+.sc-player-standart.sc-P-wide .sc-box-controls {
+	background-color: var(--awrk-bg1);
+}
+.sc-player-standart .sc-tracklist {
+	background: var(--plist-bg1);
+}
 
 /* Volume + Timescale */
 .sc-player-standart .sc-volume,
@@ -71,9 +82,11 @@
 	background-color: var(--fill-bar1);
 	border-right-color: var(--fill-bar1);
 }
-.sc-player-standart .sc-bar-volume:hover,
-.sc-player-standart .S-hook > .sc-bar-volume {
-	border-right-color: var(--btns-bg1);
+.sc-player-standart .sc-volume:after {
+	color: var(--fill-bar1);
+}
+.sc-player-standart .sc-volume.S-hook:after{
+	background-image: linear-gradient(transparent 8%, var(--cont-bg1) 16%, var(--cont-bg1) 82%, transparent 90%);
 }
 .sc-player-standart .sc-bar-buffer {
 	background-color: var(--fill-bar2);

@@ -11,10 +11,12 @@
 			window.onload = e => {
 				const fx = document.body.querySelectorAll('.fx-vert, .fx-super');
 				const sp = new SCPlayer({ variant: 'vertical', colors: 'blue' });
+				const wp = new SCPlayer({ variant: 'wide'    , colors: 'orange' });
 
 				fx[0].children[0].onclick = // +>
 				fx[1].children[0].onclick = _onClkAct;
 				fx[0].append(sp);
+				fx[1].append(wp);
 			}
 			const _onClkAct = ({ target }) => {
 				const parent = target.parentNode;
@@ -50,12 +52,11 @@
 				</h2>
 			</div>
 			<div class="fx-super">
-				<h2>super
+				<h2>wide
 					<span class="col-green"></span>
 					<span class="col-blue"></span>
 					<span class="col-orange selected"></span>
 				</h2>
-				<sc-player class="sc-player-super sc-C-orange"></sc-player>
 			</div>
 		</div>
 		<div class="footer">2025</div>
