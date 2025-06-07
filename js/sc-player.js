@@ -23,6 +23,7 @@ class SCPlayer extends HTMLElement {
 		const sc_tracks = sc_ui.playlist = SCPlayer.cNode('sc-tracklist', 'sc-list');
 		const sc_addinp = /* .......... */ SCPlayer.cNode('S-hidden', 'input');
 		const sc_addbtn = /* .......... */ SCPlayer.cNode('sc-add-track', 'label');
+		const sc_dropbx = sc_ui.dropBox  = SCPlayer.cNode('sc-box-drop');
 		const sc_ctrlbx = sc_ui.ctrlBox  = SCPlayer.cNode('sc-box-controls');
 		const sc_wavefm = sc_ui.waveform = SCPlayer.cNode('sc-waveform');
 		const sc_artwrk = sc_ui.artwork  = SCPlayer.cNode('sc-artwork');
@@ -40,8 +41,9 @@ class SCPlayer extends HTMLElement {
 		sc_addinp.multiple = true;
 		sc_volbar.style.width = '100%';
 		sc_player.className = `sc-player-${theme} sc-P-${variant} sc-C-${colors}`;
-		sc_player.append(sc_artwrk, sc_tracks, sc_addbtn, sc_ctrlbx);
-		sc_ctrlbx.append(sc_volume, sc_tscale, sc_timein, sc_play, sc_inflay, sc_info);
+		sc_player.append(sc_tracks, sc_dropbx, sc_ctrlbx);
+		sc_ctrlbx.append(sc_artwrk, sc_volume, sc_tscale, sc_timein, sc_play, sc_inflay, sc_info);
+		sc_dropbx.append(sc_addbtn);
 		sc_volume.append(sc_volbar);
 		sc_addbtn.append(sc_addinp);
 		sc_tscale.appendChild(sc_wavefm).append(sc_bufbar, sc_plybar);
@@ -204,18 +206,19 @@ class SCPlayer extends HTMLElement {
 /**
  * @param {PointerEvent} e
  */
-	_onBarChange(e, is_play_bar = false, is_vert = false) {
+	_onBarChange(e, is_play_bar = false) {
 
 		const bar    = is_play_bar ? this._scui.playBar  : this._scui.volmBar;
 		const audio  = /* ------- */ this._scui.audio;
 		const parent = is_play_bar ? this._scui.timekind : this._scui.volume;
 
-		bar.style.width = null; // reset bar to 100% width
+		bar.style.width = bar.style.height = null; // reset bar to 100% w:h
 		parent.classList.add('S-hook');
 
 		const { left, width:maxw, // get bar coords and sizes 
 				top, height:maxh } = bar.getBoundingClientRect();
 
+		const is_vert = maxh > maxw;
 		const hPos = x => {
 			let v = (x -= left) / maxw;
 			if (x < 0)
@@ -226,11 +229,11 @@ class SCPlayer extends HTMLElement {
 			return v;
 		}
 		const vPos = y => {
-			let v = maxh / (y -= top);
+			let v = (y = top + maxh - y) / maxh;
 			if (y < 0)
-				y = 0, v = 1.0;
+				y = v = 0;
 			else if (y > maxh)
-				y = maxh, v = 0;
+				y = maxh, v = 1.0;
 			bar.style.height = `${y.toFixed()}px`;
 			return v;
 		}

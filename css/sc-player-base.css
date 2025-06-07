@@ -27,12 +27,14 @@ sc-player .sc-track {
 
 sc-player .sc-volume,
 sc-player .sc-time-scale,
+sc-player .sc-time-indicators,
 sc-player .sc-info-overlay {
 	visibility: hidden;
 }
 
 sc-player .S-played > .sc-volume,
 sc-player .S-played > .sc-time-scale,
+sc-player .S-played > .sc-time-indicators,
 sc-player .S-detail > .sc-info-overlay {
 	visibility: visible;
 }
@@ -50,7 +52,7 @@ sc-player .sc-box-controls {
 	position: absolute;
 	left: 0; top: 0;
 }
-sc-player .sc-add-track {
+sc-player .sc-box-drop {
 	position: absolute;
 	right: 0; bottom: 0;
 }

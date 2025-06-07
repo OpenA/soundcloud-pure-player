@@ -1,157 +1,111 @@
-.sc-player {
-	width: 200px;
-	height: 200px;
-	position: relative;
+/* ----------< SC-Player Modern Skeletion >---------------- */
+
+@import url('../sc-player-base.css');
+
+.sc-player-modern {
 	margin: 5px;
-	font: .6em Arial,sans-serif;
+	font: .7em sans-serif;
 	background-color: #eee;
-	color: #ddd;
+	color: white;
 	line-height: 1.6em;
 	text-shadow: none;
-	display: inline-block;
 }
-.sc-player a {
-	text-decoration: none;
+.sc-player-modern .sc-artwork,
+.sc-player-modern .sc-box-controls {
+	position: relative;
+	width: 200px;
+	height: 200px;
 }
-.sc-player ol, .sc-player li {
-	margin: 0;
-	padding: 0;
-}
+
 
 /*******************************/
 /*********** Artwork ***********/
 /*******************************/
-.sc-artwork-list {
-	width: 100%;
-	height: 100%;
-	background: url('img/artwork-qm.svg') no-repeat center;
-	background-size: 100%;
-	list-style-type: none;
-	position: relative;
-	box-sizing: border-box;
-	-moz-box-sizing: border-box;
+.sc-player-modern .sc-artwork {
+	background: url('img/artwork-qm.svg') no-repeat center / 100%;
 	box-shadow: rgba(0, 0, 0, .35) 0 1px 5px;
-	float: left;
-	margin: 0 10px 30px 0;
 }
-.sc-artwork-list::after {
+.sc-player-modern .sc-artwork:after {
 	position: absolute;
-	top: 0; left: 0; right: 0; bottom: -1px;
-	content: " ";
-	background: url('img/gradient-glass.svg');
-	background: -webkit-linear-gradient(-45deg, rgba(255, 255, 255, .15) 50%, transparent 50%);
-	background: -moz-linear-gradient(-45deg, rgba(255, 255, 255, .15) 50%, transparent 50%);
-	background: -o-linear-gradient(-45deg, rgba(255, 255, 255, .15) 50%, transparent 50%);
+	top: 0; left: 0; right: 0; bottom: 0;
+	content: '';
+	background: url('img/gradient-glass.svg') no-repeat center / 100%;
 	box-shadow: rgba(255, 255, 255, .1) 0 1px 0 inset;
-}
-.sc-artwork-list li {
-	list-style-type: none;
-	display: none;
-}
-.sc-artwork-list li.active {
-	list-style-type: none;
-	display: block;
-}
-.sc-artwork-list img {
-	list-style-type: none;
-	width: 100%;
-	height: 100%;
 }
 
 /*******************************/
 /********** Controls ***********/
 /*******************************/
-.sc-controls {
+.sc-player-modern .sc-play-toggle {
 	position: absolute;
 	width: 50px;
 	height: 50px;
-	margin-left: -25px;
-	margin-top: -25px;
-	top: 50%;
-	left: 50%;
+	top: 37%;
+	left: 37%;
 	border: 2px solid #ddd;
 	border-radius: 100%;
 	background-color: #333;
 	opacity: .8;
 }
-.sc-controls:hover{
+.sc-player-modern .sc-play-toggle:hover {
 	background-color: #333;
 	opacity: .9;
 }
-.sc-controls > * {
+.sc-player-modern .sc-play-toggle:before {
+	content: '';
+	display: block;
 	width: 50px;
 	height: 50px;
-	color: transparent;
-	cursor: pointer;
+	background: url('img/play-modern.svg') no-repeat center / 40%;
 }
-.sc-play {
-	background: url('img/play-modern.svg') no-repeat center;
-}
-.sc-pause {
-	background: url('img/pause-modern.svg') no-repeat center;
+.sc-player-modern .S-played:not(.S-paused) > .sc-play-toggle:before {
+	background-image: url('img/pause-modern.svg');
 }
 
 /*******************************/
 /*********** Scrubber **********/
 /*******************************/
-.sc-scrubber {
+.sc-player-modern .sc-time-scale {
 	position: absolute;
-	bottom: 0px;
-	height: 10px;
-	width: 200px;
-	border-radius: 8px;
-	visibility: hidden;
+	bottom: 0; left: 0; right: 0;
+	height: 12px;
 }
-.sc-time-span {
-	position: relative;
+.sc-player-modern .sc-bar-buffer {
+	background-color: rgba(128,128,128,.5);
+	border-top: 1px solid #888;
 }
-.sc-buffer, .sc-played {
-	height: 9px;
-	position: absolute;
-	top: 0;
-}
-.sc-played {
+.sc-player-modern .sc-bar-plying {
 	background-color: rgba(0,0,0,.5);
-	border: 1px groove #ddd;
-	opacity: .7;
+	border: 0 solid white;
+	border-width: 0 1px 1px 0;
 }
-.sc-time-indicators {
+.sc-player-modern .sc-time-indicators {
 	position: absolute;
 	right: 5px;
 	top: 5px;
 	background-color: rgba(0,0,0,.4);
 	border-radius: 4px;
 	padding: 4px;
-	visibility: hidden;
 }
-.sc-waveform-container {
-	height: 10px;
-	width: 200px;
-	position: absolute;
-}
-.sc-player.played .sc-scrubber, .sc-player.paused .sc-scrubber, .sc-player.played .sc-time-indicators, .sc-player.paused .sc-time-indicators {
-	visibility: visible;
+.sc-player-modern .sc-waveform {
+	background: transparent;
 }
 
 /*******************************/
 /********** Trackslist *********/
 /*******************************/
-.sc-trackslist {
+.sc-player-modern .sc-tracklist {
 	position: absolute;
-	width: 100%;
-	max-height: 30%;
-	bottom: 0;
+	width: 200px; left: 0;
+	height: 200px; top: 0;
 	overflow: auto;
-	background-color: rgba(0, 0, 0, .5);
-	opacity: 0;
+	background-color: #2f2f2f;
+	color: #ddd;
 }
-.sc-trackslist li {
-	position: relative;
-	cursor: pointer;
-	margin: 1px 5px;
+.sc-player-modern .sc-track {
 	padding: 3px 30px 3px 5px;
 }
-.sc-track-duration {
+.sc-player-modern .sc-track:after {
 	text-align: right;
 	padding: 0 5px;
 	margin-left: 5px;
@@ -159,98 +113,108 @@
 	right: 0;
 	top: 3px;
 }
-.sc-trackslist li:hover {
+.sc-player-modern .sc-track:hover {
 	background-color: rgba(99, 99, 99, .9);
 }
-.sc-trackslist li.active {
+.sc-player-modern .sc-track.S-active {
 	background-color: rgba(77, 77, 77, .7);
 }
-.sc-trackslist li.active a, .sc-trackslist li a {
-	color: #ddd;
+.sc-player-modern.sc-P-vertical .sc-tracklist {
+	transition: top .5s ease-in-out;
+	top: 100%;
 }
-.sc-trackslist:hover, .sc-trackslist:focus {
-	opacity: 1;
-	z-index: 1;
+.sc-player-modern.sc-P-horizontal .sc-tracklist {
+	transition: left .5s ease-in-out;
+	left: 100%;
+}
+.sc-player-modern:not(:hover):not(:focus) .sc-tracklist {
+	top: 0; left: 0;
 }
 
 /*******************************/
 /************ Info *************/
 /*******************************/
-.sc-info {
+.sc-player-modern .sc-info-overlay {
 	position: absolute;
-	top: 0px;
+
 	width: 190px;
 	height: 190px;
-	z-index: 1;
+
 	padding: 5px;
 	background-color: rgba(0, 0, 0, .9);
 	overflow: auto;
 }
-.sc-info-toggle {
+.sc-player-modern .sc-info-toggle {
 	position: absolute;
 	top: 9px;
 	left: 9px;
 	width: 17px;
 	height: 17px;
-	color: transparent;
-	cursor: pointer;
+	border-radius: 100%;
+	background-position: 0 100%;
 }
-.sc-info-toggle:hover, .sc-player:focus .sc-info-toggle {
-	background: url('img/info-modern.svg') no-repeat center;
-	color: transparent;
+.sc-player-modern .sc-bar-volume:before,
+.sc-player-modern .sc-info-toggle {
+	background-color: rgba(0,0,0,.5);
+	background-image: url('img/info-modern.svg');
+	background-size: 200%;
 }
-.sc-info-close {
-	position: absolute;
-	top: 5px;
-	right: 5px;
-	padding: 1px 4px;
-	color: gray;
-	cursor: pointer;
+.sc-player-modern .sc-info-toggle:hover {
+	background-color: rgba(85,85,85,.5);
 }
-.sc-info-close:hover {
-	color: white;
-}
-.sc-info a {
+.sc-player-modern .sc-info-title {
 	color: #95bcce;
 }
-.sc-info a:hover {
+.sc-player-modern .sc-info-album {
 	color: #5e7681;
 }
-.sc-info p a {
-	text-decoration: underline;
+.sc-player-modern .sc-info-author {
+	color: #5e7681;
 }
-.sc-info, .sc-info-toggle.active {
+.sc-player-modern:not(:hover):not(:focus) .sc-info-toggle {
 	visibility: hidden;
 }
-.sc-info.active {
+.sc-player-modern .S-detail > .sc-info-toggle {
+	background-position: 0 0;
 	visibility: visible;
 }
 
 /*******************************/
 /************ Volume ***********/
 /*******************************/
-.sc-volume-slider {
-	top: -25px;
+.sc-player-modern .sc-volume {
 	position: absolute;
-	width: 110px;
-	height: 12px;
-	background-color: #e5e5e5;
-	border-radius: 2px;
+	top: 43px; width: 17px;
+	left: 9px; height: 117px;
+	border-radius: 10px;
+	border: 1px solid rgba(0,0,0,.5);
+	border-radius: 10px;
+	max-height: 117px;
 }
-.sc-volume-status {
+.sc-player-modern .sc-bar-volume {
 	position: absolute;
-	width: 0%;
-	height: 10px;
-	top: 1px;
-	left: 1px;
-	background-color: #666;
-	border-right: 1px solid #f6a400;
+	border-radius: 10px;
+	background-color: rgba(0,0,0,.5);
+	left:0; right:0; bottom:17px;
+	max-height: 100px;
+}
+.sc-player-modern .sc-bar-volume:before {
+	content:'';
+	position: absolute;
+	left:0; top:0;
+	padding: 8.5px;
+	border-radius: 10px;
+	background-position: 100% 0;
+	outline: 1px solid #ddd;
+}
+.sc-player-modern .sc-volume[data-percent="0"] > .sc-bar-volume:before {
+	background-position: 100% 100%;
 }
 
 /*******************************/
-.sc-volume-slider,
-.sc-player .hidden,
-.sc-waveform-container img,
-.sc-no-artwork {
-	display: none;
+.sc-player-modern .sc-volume,
+.sc-player-modern .sc-bar-volume {
+	transition: top .5s ease, max-height .5s ease-in-out;
 }
+.sc-player-modern:not(:hover):not(:focus) .sc-bar-volume { max-height: 0; }
+.sc-player-modern:not(:hover):not(:focus) .sc-volume     { max-height: 17px; top: 9px; }

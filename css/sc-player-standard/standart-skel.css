@@ -8,18 +8,23 @@
 	margin: 5px;
 	font: normal .8em sans-serif;
 }
+.sc-player-standart:before {
+	content:'';
+	display: block;
+}
 
 /* Content blocks rectangles */
 .sc-player-standart .sc-box-controls,
 .sc-player-standart .sc-artwork,
-.sc-player-standart .sc-tracklist {
+.sc-player-standart .sc-tracklist,
+.sc-player-standart:before {
 	width: 270px;
 	height: 270px;
 }
 
 /* Playlist formations */
-.sc-P-horizontal { flex-direction: row; }
-.sc-P-vertical   { flex-direction: column; }
+.sc-player-standart.sc-P-horizontal { flex-direction: row; }
+.sc-player-standart.sc-P-vertical   { flex-direction: column; }
 
 /* Volume bar */
 .sc-player-standart .sc-volume {
@@ -126,16 +131,12 @@
 .sc-player-standart.sc-P-wide .sc-artwork {
 	width: 150px;
 	height: 150px;
-	z-index:1;
-}
-.sc-player-standart.sc-P-wide .sc-info-toggle,
-.sc-player-standart.sc-P-wide .sc-info-overlay {
-	z-index:1;
 }
 .sc-player-standart.sc-P-wide .sc-info-toggle {
 	right: 10px;
 	left: auto;
 }
+.sc-player-standart.sc-P-wide:before,
 .sc-player-standart.sc-P-wide .sc-box-controls {
 	width: 100%;
 	height: 150px;
